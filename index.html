@@ -183,7 +183,6 @@
 
         async function syncData() {
             try {
-                // Fetch data kelas
                 const resClass = await fetch(CLASS_SHEET_URL);
                 const textClass = await resClass.text();
                 textClass.split('\n').slice(1).forEach(row => {
@@ -196,7 +195,6 @@
                     }
                 });
                 
-                // Fetch data game
                 const resGame = await fetch(GAME_SHEET_URL);
                 const textGame = await resGame.text();
                 textGame.split('\n').slice(1).forEach(row => {
@@ -258,7 +256,8 @@
         
         const now = new Date();
         const daysShort = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
-        const classes = ['Libur', 'Kls 1', 'Kls 2', 'Kls 3', 'Kls 4', 'Kls 5', 'Kls 6'];
+        // Jadwal diperbarui: Sen: Kls 4, Rab: Kls 5, Kam: Kls 6, Jum: Kls 1 & 2
+        const jadwalMingguan = { 1: "Kls 4", 3: "Kls 5", 4: "Kls 6", 5: "Kls 1/2" };
         const weatherForecast = ['Cerah ☀️', 'Berawan ⛅', 'Hujan 🌦️', 'Cerah ☀️', 'Berawan ⛅'];
         const colColors = ['bg-rose-500', 'bg-sky-500', 'bg-emerald-500', 'bg-amber-500', 'bg-fuchsia-500'];
         
@@ -275,7 +274,7 @@
             div.innerHTML = `
                 ${isToday ? '<span class="text-[6px] font-bold uppercase opacity-80 leading-none">Hari ini</span>' : ''}
                 <span class="text-[9px] font-bold block">${daysShort[i]}, ${date.getDate()}</span>
-                <span class="text-[8px] block">${classes[i]}</span>
+                <span class="text-[8px] block">${jadwalMingguan[i] || "-"}</span>
                 <span class="text-xl mt-0.5 block">${weatherForecast[i-1].split(' ')[1]}</span>
             `;
             grid.appendChild(div);
