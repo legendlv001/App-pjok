@@ -57,7 +57,6 @@
             </div>
         </section>
 
-        <!-- AI Chat Interface Section (Matches image_9351e3.png) -->
         <section class="mb-6">
             <div id="ai-card" class="bg-[#8A9A65] p-5 rounded-[32px] text-white shadow-lg">
                 <div class="flex items-center gap-3 mb-3">
@@ -73,7 +72,6 @@
                     <span>💬 Tanya Si AGBI</span>
                 </button>
 
-                <!-- Hidden chat interface -->
                 <div id="chat-interface" class="hidden mt-4 bg-white/20 p-3 rounded-2xl border border-white/20">
                     <div id="chat-history" class="space-y-2 mb-3 h-32 overflow-y-auto text-sm pr-2 scrollbar-thin">
                         <p class="text-white/90 italic text-xs">Halo! Saya Si AGBI, siap membantu tugas PJOK-mu. Apa yang ingin kamu tanyakan?</p>
@@ -106,16 +104,16 @@
             <h2 class="text-lg font-semibold mb-3 text-rich-sea-blue flex items-center gap-2">
                 <span>🎮</span> Zona Permainan
             </h2>
-            <div class="grid grid-cols-2 gap-4">
-                <button id="game-tinggi" onclick="handleGameClick('tinggi')" class="p-4 rounded-3xl bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2 hover:scale-[1.02] transition-all shadow-sm">
-                    <span class="text-2xl">🤖</span>
-                    <span class="font-bold text-sm">Kls Tinggi</span>
-                    <span id="status-tinggi" class="text-[10px] font-bold">...</span>
+            <div class="grid grid-cols-2 gap-3">
+                <button id="game-tinggi" onclick="handleGameClick('tinggi')" class="p-3 rounded-3xl bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-1 hover:scale-[1.02] transition-all shadow-sm">
+                    <span class="text-xl">🤖</span>
+                    <span class="font-bold text-[11px]">Kls Tinggi</span>
+                    <span id="status-tinggi" class="text-[9px] font-bold">...</span>
                 </button>
-                <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-4 rounded-3xl bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2 hover:scale-[1.02] transition-all shadow-sm">
-                    <span class="text-2xl">🧩</span>
-                    <span class="font-bold text-sm">Kls Rendah</span>
-                    <span id="status-rendah" class="text-[10px] font-bold">...</span>
+                <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-3 rounded-3xl bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-1 hover:scale-[1.02] transition-all shadow-sm">
+                    <span class="text-xl">🧩</span>
+                    <span class="font-bold text-[11px]">Kls Rendah</span>
+                    <span id="status-rendah" class="text-[9px] font-bold">...</span>
                 </button>
             </div>
         </section>
@@ -131,12 +129,12 @@
         let GAME_LINKS = { tinggi: null, rendah: null };
 
         const KELOMPOK_DATA = [
-            { id: 1, label: 'KELAS 1', number: '1', color: 'bg-[#FFD1D1]' },
-            { id: 2, label: 'KELAS 2', number: '2', color: 'bg-[#FFF0C8]' },
-            { id: 3, label: 'KELAS 3', number: '3', color: 'bg-[#C1CDB4]' },
-            { id: 4, label: 'KELAS 4', number: '4', color: 'bg-[#FFD8B1]' },
-            { id: 5, label: 'KELAS 5', number: '5', color: 'bg-[#D2E0FB]' },
-            { id: 6, label: 'KELAS 6', number: '6', color: 'bg-[#A3B18A]' },
+            { id: 1, label: 'KELAS 1', icon: '⚽', color: 'bg-[#FFD1D1]' },
+            { id: 2, label: 'KELAS 2', icon: '🏀', color: 'bg-[#FFF0C8]' },
+            { id: 3, label: 'KELAS 3', icon: '🎾', color: 'bg-[#C1CDB4]' },
+            { id: 4, label: 'KELAS 4', icon: '🏸', color: 'bg-[#FFD8B1]' },
+            { id: 5, label: 'KELAS 5', icon: '🏐', color: 'bg-[#D2E0FB]' },
+            { id: 6, label: 'KELAS 6', icon: '🏆', color: 'bg-[#A3B18A]' },
         ];
 
         function openChat() {
@@ -148,13 +146,10 @@
             const input = document.getElementById('chat-input');
             const history = document.getElementById('chat-history');
             const text = input.value.trim();
-            
             if (!text) return;
-            
             input.value = '';
             history.innerHTML += `<p class="text-right text-xs bg-white text-[#8A9A65] p-2 rounded-lg ml-10"><b>Kamu:</b> ${text}</p>`;
             history.scrollTop = history.scrollHeight;
-            
             try {
                 const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=", {
                     method: 'POST',
@@ -164,10 +159,8 @@
                         systemInstruction: { parts: [{ text: "Anda adalah Si AGBI, asisten guru PJOK yang ceria, informatif, dan menyemangati untuk anak SD. Berikan jawaban yang singkat, mudah dimengerti, dan berfokus pada kesehatan dan olahraga." }] }
                     })
                 });
-                
                 const data = await response.json();
                 const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Si AGBI sedang istirahat. Coba lagi nanti!";
-                
                 history.innerHTML += `<p class="text-left text-xs bg-white/10 text-white p-2 rounded-lg mr-10"><b>Si AGBI:</b> ${aiText}</p>`;
                 history.scrollTop = history.scrollHeight;
             } catch (e) {
@@ -193,7 +186,6 @@
                     if (key.toLowerCase().includes('tinggi')) GAME_LINKS.tinggi = link;
                     if (key.toLowerCase().includes('rendah')) GAME_LINKS.rendah = link;
                 });
-
                 renderUI();
             } catch (e) {
                 renderUI();
@@ -204,7 +196,7 @@
             const container = document.getElementById('materiContainer');
             container.innerHTML = KELOMPOK_DATA.map(cls => `
                 <div onclick="handleClassClick(${cls.id})" class="p-4 rounded-3xl cursor-pointer bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex items-center gap-3 hover:scale-[1.02] transition-all shadow-sm">
-                    <div class="w-10 h-10 ${cls.color} rounded-2xl flex items-center justify-center font-bold text-sm shadow-inner shrink-0">${cls.number}</div>
+                    <div class="w-10 h-10 ${cls.color} rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0">${cls.icon}</div>
                     <div class="min-w-0">
                         <h4 class="font-bold text-sm text-gray-800 dark:text-darkmode-text">${cls.label}</h4>
                         <p class="text-[10px] font-bold ${DYNAMIC_CLASS_LINKS[cls.id] ? 'text-green-600 dark:text-green-400' : 'text-red-500'}">
@@ -216,12 +208,14 @@
 
             ['tinggi', 'rendah'].forEach(type => {
                 const el = document.getElementById(`status-${type}`);
-                if (GAME_LINKS[type]) {
-                    el.textContent = '✅ Aktif';
-                    el.className = 'text-[10px] font-bold text-green-600 dark:text-green-400';
-                } else {
-                    el.textContent = '❌ Belum Tersedia';
-                    el.className = 'text-[10px] font-bold text-red-500';
+                if (el) {
+                    if (GAME_LINKS[type]) {
+                        el.textContent = '✅ Aktif';
+                        el.className = 'text-[9px] font-bold text-green-600 dark:text-green-400';
+                    } else {
+                        el.textContent = '❌ Belum Tersedia';
+                        el.className = 'text-[9px] font-bold text-red-500';
+                    }
                 }
             });
         }
@@ -245,14 +239,12 @@
             setTimeout(() => toast.remove(), 3000);
         }
 
-        // Initialize
         document.getElementById('theme-toggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
         document.getElementById('avatar').addEventListener('click', (e) => {
             const animals = ['🦦', '🦁', '🐯', '🐼', '🦊', '🐨', '🐸', '🐢'];
             e.target.textContent = animals[Math.floor(Math.random() * animals.length)];
         });
 
-        // Date setup
         const now = new Date();
         const daysShort = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
         const classes = ['Libur', 'Kls 1', 'Kls 2', 'Kls 3', 'Kls 4', 'Kls 5', 'Kls 6'];
