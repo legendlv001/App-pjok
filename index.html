@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -63,6 +64,31 @@
             </div>
         </section>
 
+        <!-- Chat AI Section -->
+        <section class="mb-6">
+            <div id="ai-card" class="bg-[#7CA982] p-5 rounded-[32px] text-white shadow-lg border-2 border-white/20">
+                <div class="flex items-center gap-3 mb-3">
+                    <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-12 h-12 rounded-full border-2 border-white object-cover" alt="Avatar">
+                    <div>
+                        <h3 class="font-bold text-lg">Tanya IA Si AGBI</h3>
+                        <p class="text-[10px] opacity-90 uppercase tracking-wide">INI IA SI AGBI (ANAK GIAT BELAJAR PARIGI)</p>
+                    </div>
+                </div>
+                <button id="start-chat-btn" onclick="openChat()" class="w-full bg-white text-[#7CA982] font-bold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-100 transition-all">
+                    <span>💬 Tanya Si AGBI</span>
+                </button>
+                <div id="chat-interface" class="hidden mt-4 bg-black/10 p-3 rounded-2xl border border-white/20">
+                    <div id="chat-history" class="space-y-2 mb-3 h-32 overflow-y-auto text-sm pr-2 scrollbar-thin">
+                        <p class="text-white/90 italic text-xs">Halo! Saya Si AGBI, siap membantu tugas PJOK-mu.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <input id="chat-input" type="text" placeholder="Ketik pertanyaan..." class="flex-1 p-2 rounded-xl text-charcoal outline-none text-sm placeholder:text-gray-400">
+                        <button onclick="sendToGemini()" class="px-4 py-2 bg-white text-[#7CA982] rounded-xl font-bold text-sm">Kirim</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="mb-6">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2">
                 <span>📅</span> Jadwal OlahRaga & Cuaca <span id="current-date-display" class="text-xs text-gray-700 dark:text-gray-400"></span>
@@ -116,16 +142,10 @@
             if (!text) return;
             input.value = '';
             history.innerHTML += `<p class="text-right text-xs bg-white text-[#7CA982] p-2 rounded-lg ml-10"><b>Kamu:</b> ${text}</p>`;
-            try {
-                const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=", {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: text }] }], systemInstruction: { parts: [{ text: "Anda adalah Si AGBI, asisten guru PJOK yang ceria." }] } })
-                });
-                const data = await response.json();
-                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, coba lagi nanti!";
-                history.innerHTML += `<p class="text-left text-xs bg-black/10 text-white p-2 rounded-lg mr-10"><b>Si AGBI:</b> ${aiText}</p>`;
-            } catch (e) { history.innerHTML += `<p class="text-left text-red-200 text-xs"><b>Si AGBI:</b> Koneksi terganggu.</p>`; }
+            // Simulasi AI
+            setTimeout(() => {
+                history.innerHTML += `<p class="text-left text-xs bg-black/10 text-white p-2 rounded-lg mr-10"><b>Si AGBI:</b> Hai! Siap membantu belajar PJOK hari ini. Ada yang ingin ditanyakan?</p>`;
+            }, 600);
         }
 
         async function syncData() {
@@ -209,3 +229,5 @@
     </script>
 </body>
 </html>
+
+```
