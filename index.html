@@ -8,6 +8,7 @@
     <style>
         @keyframes blink { 50% { opacity: 0.3; } }
         .blink { animation: blink 1.5s linear infinite; }
+        .toast { transition: opacity 0.3s; }
     </style>
     <script>
         tailwind.config = {
@@ -19,7 +20,9 @@
                         'light-gold': '#D4AF37',
                         'warm-cream': '#F5F5DC',
                         'rich-sea-blue': '#006994',
-                        'soft-gray': '#E0E0E0'
+                        'soft-gray': '#E0E0E0',
+                        'darkmode-card': '#1f2937',
+                        'darkmode-text': '#f3f4f6'
                     }
                 }
             }
@@ -31,48 +34,33 @@
     <div class="max-w-2xl mx-auto p-4">
         <header class="flex justify-between items-center mb-6 border-b-2 border-light-gold pb-2">
             <h1 class="text-2xl font-bold flex items-center gap-2">
-                <span class="text-xl">🦦</span>
+                <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" alt="Logo" class="w-8 h-8 object-contain">
                 <span class="text-charcoal dark:text-white">PJOK</span>
                 <span class="text-rich-sea-blue">SDN 1</span>
                 <span class="text-light-gold">PARIGI</span>
             </h1>
-            <button id="theme-toggle" class="p-2 rounded-xl bg-soft-gray dark:bg-gray-700 text-charcoal dark:text-light-gold transition-all font-bold flex items-center">
-                <span class="block dark:hidden">☀️</span>
-                <span class="hidden dark:block">🌙</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <div id="sheetStatusBadge" class="text-[9px] bg-gray-200 text-gray-600 font-bold px-2 py-1 rounded-full">Menyinkronkan...</div>
+                <button id="theme-toggle" class="p-2 rounded-xl bg-soft-gray dark:bg-gray-700 text-charcoal dark:text-light-gold transition-all font-bold">
+                    <span class="block dark:hidden">☀️</span>
+                    <span class="hidden dark:block">🌙</span>
+                </button>
+            </div>
         </header>
 
-        <!-- Bagian Profil Murid -->
         <section class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm mb-4 flex items-center gap-4 border border-light-gold">
-            <div id="avatar" class="text-4xl cursor-pointer hover:scale-110 transition-transform">🦦</div>
+            <div id="avatar" class="text-4xl cursor-pointer hover:scale-110 transition-transform">🐸</div>
             <div class="flex-1">
                 <input type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-300 dark:border-gray-600 focus:border-rich-sea-blue">
                 <p class="text-[10px] text-gray-500">Klik hewan untuk ganti avatar</p>
             </div>
         </section>
 
-        <!-- Bagian Motivasi dengan Api 3D -->
-        <section class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border-l-4 border-rich-sea-blue mb-6 flex items-center justify-center gap-3">
-            <span class="text-3xl">🔥</span>
-            <p class="text-sm italic text-center">"Bergerak Cerdas, Tumbuh Sehat, Semangat Berolahraga!"</p>
-            <span class="text-3xl">🔥</span>
-        </section>
-
         <section class="mb-6">
             <h2 class="text-lg font-semibold mb-3 text-rich-sea-blue flex items-center gap-2">
-                <span>📅</span> Jadwal Olahraga
+                <span>📅</span> Jadwal OlahRaga & Cuaca <span id="current-date-display" class="text-xs text-gray-500 dark:text-gray-400"></span>
             </h2>
-            <div class="grid grid-cols-5 gap-1.5 text-center">
-                <div class="bg-white dark:bg-gray-700 p-2 rounded-lg shadow-sm"><span class="text-[9px] font-bold block">Sen, 22</span><span class="text-[8px] block">Kls 3</span><span class="text-[10px] mt-1 block">🌤️</span></div>
-                <div class="bg-white dark:bg-gray-700 p-2 rounded-lg shadow-sm"><span class="text-[9px] font-bold block">Sel, 23</span><span class="text-[8px] block">Kls 4</span><span class="text-[10px] mt-1 block">⛅</span></div>
-                <div class="bg-rich-sea-blue text-white p-2 rounded-lg shadow-md blink flex flex-col items-center">
-                    <span class="text-[6px] font-bold uppercase opacity-80 leading-none">Hari ini</span>
-                    <span class="text-[9px] font-bold block">Rab, 24</span>
-                    <span class="text-[8px] block">Kls 5</span>
-                    <span class="text-[10px] mt-0.5 block">☀️</span>
-                </div>
-                <div class="bg-white dark:bg-gray-700 p-2 rounded-lg shadow-sm"><span class="text-[9px] font-bold block">Kam, 25</span><span class="text-[8px] block">Kls 6</span><span class="text-[10px] mt-1 block">🌦️</span></div>
-                <div class="bg-white dark:bg-gray-700 p-2 rounded-lg shadow-sm"><span class="text-[9px] font-bold block">Jum, 26</span><span class="text-[8px] block">Kls 1-2</span><span class="text-[10px] mt-1 block">🌤️</span></div>
+            <div id="schedule-grid" class="grid grid-cols-5 gap-1.5 text-center">
             </div>
         </section>
 
@@ -80,13 +68,7 @@
             <h2 class="text-lg font-semibold mb-3 text-rich-sea-blue flex items-center gap-2">
                 <span>🎓</span> Kelompok Kelas
             </h2>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-light-gold p-4 rounded-2xl text-white font-bold text-center shadow-[0_6px_0_#b8982a]">Kelas 1<br><span class="text-2xl">🥎</span></div>
-                <div class="bg-light-gold p-4 rounded-2xl text-white font-bold text-center shadow-[0_6px_0_#b8982a]">Kelas 2<br><span class="text-2xl">🏸</span></div>
-                <div class="bg-light-gold p-4 rounded-2xl text-white font-bold text-center shadow-[0_6px_0_#b8982a]">Kelas 3<br><span class="text-2xl">🏀</span></div>
-                <div class="bg-light-gold p-4 rounded-2xl text-white font-bold text-center shadow-[0_6px_0_#b8982a]">Kelas 4<br><span class="text-2xl">⚽</span></div>
-                <div class="bg-light-gold p-4 rounded-2xl text-white font-bold text-center shadow-[0_6px_0_#b8982a]">Kelas 5<br><span class="text-2xl">🏓</span></div>
-                <div class="bg-light-gold p-4 rounded-2xl text-white font-bold text-center shadow-[0_6px_0_#b8982a]">Kelas 6<br><span class="text-2xl">🏐</span></div>
+            <div id="materiContainer" class="grid grid-cols-2 gap-4">
             </div>
         </section>
 
@@ -94,33 +76,144 @@
             <h2 class="text-lg font-semibold mb-3 text-rich-sea-blue flex items-center gap-2">
                 <span>🎮</span> Zona Permainan
             </h2>
-            <div class="flex gap-4">
-                <button class="flex-1 bg-rich-sea-blue text-white py-3 rounded-xl font-bold hover:opacity-90 transition flex items-center justify-center gap-2 cursor-default">
-                    <span>🤖</span> Kls Tinggi
+            <div class="grid grid-cols-2 gap-4">
+                <button id="game-tinggi" onclick="handleGameClick('tinggi')" class="p-4 rounded-3xl bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2 hover:scale-[1.02] transition-all shadow-sm">
+                    <span class="text-2xl">🤖</span>
+                    <span class="font-bold text-sm">Kls Tinggi</span>
+                    <span id="status-tinggi" class="text-[10px] font-bold">...</span>
                 </button>
-                <button class="flex-1 bg-rich-sea-blue text-white py-3 rounded-xl font-bold hover:opacity-90 transition flex items-center justify-center gap-2 cursor-default">
-                    <span>🧩</span> Kls Rendah
+                <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-4 rounded-3xl bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex flex-col items-center gap-2 hover:scale-[1.02] transition-all shadow-sm">
+                    <span class="text-2xl">🧩</span>
+                    <span class="font-bold text-sm">Kls Rendah</span>
+                    <span id="status-rendah" class="text-[10px] font-bold">...</span>
                 </button>
             </div>
         </section>
     </div>
 
+    <div id="toast-container" class="fixed bottom-4 left-4 right-4 z-50"></div>
+
     <script>
-        const toggle = document.getElementById('theme-toggle');
-        const avatar = document.getElementById('avatar');
-        const animals = ['🦦', '🦁', '🐯', '🐼', '🦊', '🐨', '🐸', '🐢'];
-        let currentIdx = 0;
+        const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
+        const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
+        
+        let DYNAMIC_CLASS_LINKS = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null };
+        let GAME_LINKS = { tinggi: null, rendah: null };
 
-        avatar.addEventListener('click', () => {
-            currentIdx = (currentIdx + 1) % animals.length;
-            avatar.textContent = animals[currentIdx];
+        const KELOMPOK_DATA = [
+            { id: 1, label: 'KELAS 1', number: '1', color: 'bg-[#FFD1D1]' },
+            { id: 2, label: 'KELAS 2', number: '2', color: 'bg-[#FFF0C8]' },
+            { id: 3, label: 'KELAS 3', number: '3', color: 'bg-[#C1CDB4]' },
+            { id: 4, label: 'KELAS 4', number: '4', color: 'bg-[#FFD8B1]' },
+            { id: 5, label: 'KELAS 5', number: '5', color: 'bg-[#D2E0FB]' },
+            { id: 6, label: 'KELAS 6', number: '6', color: 'bg-[#A3B18A]' },
+        ];
+
+        async function syncData() {
+            const badge = document.getElementById('sheetStatusBadge');
+            try {
+                const resClass = await fetch(CLASS_SHEET_URL);
+                const csvClass = await resClass.text();
+                csvClass.split(/\r?\n/).slice(1).forEach(row => {
+                    const [cls, link] = row.split(',').map(v => v.replace(/"/g, '').trim());
+                    const match = cls?.match(/[1-6]/);
+                    if (match && link?.startsWith('http')) DYNAMIC_CLASS_LINKS[match[0]] = link;
+                });
+
+                const resGame = await fetch(GAME_SHEET_URL);
+                const csvGame = await resGame.text();
+                csvGame.split(/\r?\n/).slice(1).forEach(row => {
+                    const [key, link] = row.split(',').map(v => v.replace(/"/g, '').trim());
+                    if (!link?.startsWith('http')) return;
+                    if (key.toLowerCase().includes('tinggi')) GAME_LINKS.tinggi = link;
+                    if (key.toLowerCase().includes('rendah')) GAME_LINKS.rendah = link;
+                });
+
+                badge.className = "text-[9px] bg-green-100 text-green-700 font-bold px-2 py-1 rounded-full";
+                badge.textContent = "Sinkron";
+                renderUI();
+            } catch (e) {
+                badge.textContent = 'Gagal Sinkron';
+                renderUI();
+            }
+        }
+
+        function renderUI() {
+            const container = document.getElementById('materiContainer');
+            container.innerHTML = KELOMPOK_DATA.map(cls => `
+                <div onclick="handleClassClick(${cls.id})" class="p-4 rounded-3xl cursor-pointer bg-white dark:bg-darkmode-card border border-gray-200 dark:border-gray-700 flex items-center gap-3 hover:scale-[1.02] transition-all shadow-sm">
+                    <div class="w-10 h-10 ${cls.color} rounded-2xl flex items-center justify-center font-bold text-sm shadow-inner shrink-0">${cls.number}</div>
+                    <div class="min-w-0">
+                        <h4 class="font-bold text-sm text-gray-800 dark:text-darkmode-text">${cls.label}</h4>
+                        <p class="text-[10px] font-bold ${DYNAMIC_CLASS_LINKS[cls.id] ? 'text-green-600 dark:text-green-400' : 'text-red-500'}">
+                            ${DYNAMIC_CLASS_LINKS[cls.id] ? '✅ Aktif' : '❌ Belum Tersedia'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update Game Status
+            ['tinggi', 'rendah'].forEach(type => {
+                const el = document.getElementById(`status-${type}`);
+                if (GAME_LINKS[type]) {
+                    el.textContent = '✅ Aktif';
+                    el.className = 'text-[10px] font-bold text-green-600 dark:text-green-400';
+                } else {
+                    el.textContent = '❌ Belum Tersedia';
+                    el.className = 'text-[10px] font-bold text-red-500';
+                }
+            });
+        }
+
+        function handleClassClick(id) {
+            if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank');
+            else showToast("Maaf, kelas ini belum dibuka!", "error");
+        }
+
+        function handleGameClick(type) {
+            if (GAME_LINKS[type]) window.open(GAME_LINKS[type], '_blank');
+            else showToast("Maaf, zona permainan belum tersedia!", "error");
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-xl shadow-lg mb-2 text-white font-bold text-sm ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        const now = new Date();
+        const daysShort = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+        const classes = ['Libur', 'Kls 1', 'Kls 2', 'Kls 3', 'Kls 4', 'Kls 5', 'Kls 6'];
+        const weatherForecast = ['Cerah ☀️', 'Berawan ⛅', 'Hujan 🌦️', 'Cerah ☀️', 'Berawan ⛅'];
+        document.getElementById('current-date-display').textContent = ` - ${new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }).format(now)}`;
+        
+        const grid = document.getElementById('schedule-grid');
+        const currentDayIndex = now.getDay();
+        for(let i = 1; i <= 5; i++) {
+            const date = new Date();
+            date.setDate(now.getDate() - currentDayIndex + i);
+            const isToday = (i === currentDayIndex);
+            const div = document.createElement('div');
+            div.className = isToday ? "bg-rich-sea-blue text-white p-2 rounded-lg shadow-md blink flex flex-col items-center" : "bg-white dark:bg-gray-700 p-2 rounded-lg shadow-sm flex flex-col items-center";
+            div.innerHTML = `
+                ${isToday ? '<span class="text-[6px] font-bold uppercase opacity-80 leading-none">Hari ini</span>' : ''}
+                <span class="text-[9px] font-bold block">${daysShort[i]}, ${date.getDate()}</span>
+                <span class="text-[8px] block">${classes[i]}</span>
+                <span class="text-[10px] mt-0.5 block">${weatherForecast[i-1].split(' ')[1]}</span>
+            `;
+            grid.appendChild(div);
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+        document.getElementById('avatar').addEventListener('click', (e) => {
+            const animals = ['🦦', '🦁', '🐯', '🐼', '🦊', '🐨', '🐸', '🐢'];
+            e.target.textContent = animals[Math.floor(Math.random() * animals.length)];
         });
 
-        toggle.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-        });
+        syncData();
     </script>
 </body>
 </html>
-
-```
