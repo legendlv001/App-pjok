@@ -44,7 +44,7 @@
     <div class="max-w-2xl mx-auto p-4">
         <header class="flex justify-between items-center mb-6 border-b-2 border-light-gold pb-2 bg-white/80 dark:bg-black/40 p-4 rounded-2xl shadow-lg">
             <h1 class="text-2xl font-bold flex items-center gap-2">
-                <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" alt="Logo" class="w-8 h-8 object-contain">
+                <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" alt="Logo" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm">
                 <span class="text-charcoal dark:text-white">PJOK</span>
                 <span class="text-rich-sea-blue dark:text-blue-400">SDN 1</span>
                 <span class="text-light-gold">PARIGI</span>
@@ -56,10 +56,12 @@
         </header>
 
         <section class="bg-white/90 dark:bg-darkmode-card p-4 rounded-2xl shadow-sm mb-4 flex items-center gap-4 border border-gray-100 dark:border-gray-700">
-            <div id="avatar" class="text-4xl cursor-pointer hover:scale-110 transition-transform">🐸</div>
+            <div id="avatar-container" onclick="changeAvatar()" class="text-4xl cursor-pointer hover:scale-110 transition-transform bg-gray-200 dark:bg-gray-700 p-2 rounded-full w-16 h-16 flex items-center justify-center">
+                <span id="avatar">🐸</span>
+            </div>
             <div class="flex-1">
-                <input type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-600 focus:border-rich-sea-blue dark:text-white">
-                <p class="text-[10px] text-gray-500">Klik hewan untuk ganti avatar</p>
+                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-600 focus:border-rich-sea-blue dark:text-white">
+                <p class="text-[10px] text-gray-500">Klik ikon untuk ganti avatar</p>
             </div>
         </section>
 
@@ -70,18 +72,21 @@
                     <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-12 h-12 rounded-full border-2 border-white object-cover" alt="Avatar">
                     <div>
                         <h3 class="font-bold text-lg">Tanya IA Si AGBI</h3>
-                        <p class="text-[10px] opacity-90 uppercase tracking-wide">INI IA SI AGBI (ANAK GIAT BELAJAR PARIGI)</p>
+                        <p class="text-[10px] opacity-90 uppercase tracking-wide">ASISTEN PJOK SDN 1 PARIGI</p>
                     </div>
                 </div>
                 <button id="start-chat-btn" onclick="openChat()" class="w-full bg-white text-[#7CA982] font-bold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-100 transition-all">
                     <span>💬 Tanya Si AGBI</span>
                 </button>
                 <div id="chat-interface" class="hidden mt-4 bg-black/10 p-3 rounded-2xl border border-white/20">
-                    <div id="chat-history" class="space-y-2 mb-3 h-32 overflow-y-auto text-sm pr-2 scrollbar-thin">
-                        <p class="text-white/90 italic text-xs">Halo! Saya Si AGBI, siap membantu tugas PJOK-mu.</p>
+                    <div id="chat-history" class="space-y-4 mb-3 h-48 overflow-y-auto text-sm pr-2 scrollbar-thin">
+                        <div class="flex items-start gap-2">
+                            <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white">
+                            <p class="bg-white/10 p-3 rounded-2xl rounded-tl-none">Halo! Saya Si AGBI, apa yang ingin kamu tanyakan hari ini?</p>
+                        </div>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chat-input" type="text" placeholder="Ketik pertanyaan..." class="flex-1 p-2 rounded-xl text-charcoal outline-none text-sm placeholder:text-gray-400">
+                        <input id="chat-input" type="text" placeholder="Tulis pertanyaan..." class="flex-1 p-2 rounded-xl text-charcoal outline-none text-sm">
                         <button onclick="sendToGemini()" class="px-4 py-2 bg-white text-[#7CA982] rounded-xl font-bold text-sm">Kirim</button>
                     </div>
                 </div>
@@ -120,10 +125,111 @@
     <div id="toast-container" class="fixed bottom-4 left-4 right-4 z-50"></div>
 
     <script>
+        const apiKey = "";
+        const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮'];
+        
+        function changeAvatar() {
+            const avatarEl = document.getElementById('avatar');
+            const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+            avatarEl.textContent = randomAvatar;
+        }
+
+        function openChat() { document.getElementById('start-chat-btn').classList.add('hidden'); document.getElementById('chat-interface').classList.remove('hidden'); }
+
+        async function sendToGemini() {
+            const input = document.getElementById('chat-input');
+            const muridName = document.getElementById('murid-name').value.trim() || "Murid";
+            const muridIcon = document.getElementById('avatar').textContent;
+            const history = document.getElementById('chat-history');
+            const userText = input.value.trim();
+            if (!userText) return;
+            
+            history.innerHTML += `
+                <div class="flex items-start gap-2 justify-end">
+                    <div class="bg-white text-[#7CA982] p-3 rounded-2xl rounded-tr-none font-bold">
+                        <p class="text-[10px] opacity-70">${muridName}</p>
+                        <p>${userText}</p>
+                    </div>
+                    <div class="text-2xl">${muridIcon}</div>
+                </div>`;
+            input.value = '';
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: userText }] }],
+                        systemInstruction: { parts: [{ text: `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Kamu sedang berbicara dengan murid bernama ${muridName}. Berikan jawaban singkat, ramah, dan edukatif kepada ${muridName}.` }] }
+                    })
+                });
+                const data = await response.json();
+                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Si AGBI sedang istirahat.";
+                history.innerHTML += `
+                    <div class="flex items-start gap-2">
+                        <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white">
+                        <p class="bg-black/10 text-white p-3 rounded-2xl rounded-tl-none">${reply}</p>
+                    </div>`;
+            } catch (error) {
+                history.innerHTML += `<p class="text-left text-xs bg-red-500 text-white p-2 rounded-lg mr-10"><b>Si AGBI:</b> Maaf, koneksi ke server sedang bermasalah.</p>`;
+            }
+            history.scrollTop = history.scrollHeight;
+        }
+        
         const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
         const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
-        let DYNAMIC_CLASS_LINKS = { 1: null, 2: null, 3: null, 4: null, 5: null, 6: null };
-        let GAME_LINKS = { tinggi: null, rendah: null };
+        let DYNAMIC_CLASS_LINKS = {};
+        let GAME_LINKS = {};
+
+        async function syncData() {
+            try {
+                // Fetch data kelas
+                const resClass = await fetch(CLASS_SHEET_URL);
+                const textClass = await resClass.text();
+                textClass.split('\n').slice(1).forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) {
+                        const cls = cols[0].replace(/"/g, '').trim();
+                        const link = cols[1].replace(/"/g, '').trim();
+                        const match = cls.match(/\d+/);
+                        if (match) DYNAMIC_CLASS_LINKS[match[0]] = link;
+                    }
+                });
+                
+                // Fetch data game
+                const resGame = await fetch(GAME_SHEET_URL);
+                const textGame = await resGame.text();
+                textGame.split('\n').slice(1).forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) {
+                        const key = cols[0].replace(/"/g, '').trim().toLowerCase();
+                        const link = cols[1].replace(/"/g, '').trim();
+                        if (key.includes('tinggi')) GAME_LINKS.tinggi = link;
+                        if (key.includes('rendah')) GAME_LINKS.rendah = link;
+                    }
+                });
+                renderUI();
+            } catch (e) { console.error("Sync gagal", e); renderUI(); }
+        }
+
+        function renderUI() {
+            document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
+                <div onclick="handleClassClick(${cls.id})" class="p-4 rounded-3xl cursor-pointer ${cls.cardBg} dark:bg-darkmode-card border border-white/50 dark:border-gray-700 flex items-center gap-3 hover:scale-[1.02] transition-all shadow-sm">
+                    <div class="w-10 h-10 ${cls.color} rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0 text-white">${cls.icon}</div>
+                    <div class="min-w-0">
+                        <h4 class="font-bold text-sm text-black dark:text-darkmode-text">${cls.label}</h4>
+                        <p class="text-[10px] font-bold ${DYNAMIC_CLASS_LINKS[cls.id] ? 'text-green-700 dark:text-green-400' : 'text-red-700'}">
+                            ${DYNAMIC_CLASS_LINKS[cls.id] ? '✅ Aktif' : '❌ Belum Tersedia'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+            ['tinggi', 'rendah'].forEach(type => {
+                const el = document.getElementById(`status-${type}`);
+                if (el) { el.textContent = GAME_LINKS[type] ? '✅ Aktif' : '❌ Belum Tersedia'; }
+            });
+        }
+
         const KELOMPOK_DATA = [
             { id: 1, label: 'KELAS 1', icon: '⚽', color: 'bg-red-500', cardBg: 'bg-red-200' },
             { id: 2, label: 'KELAS 2', icon: '🏀', color: 'bg-orange-500', cardBg: 'bg-orange-200' },
@@ -133,60 +239,9 @@
             { id: 6, label: 'KELAS 6', icon: '🏆', color: 'bg-violet-500', cardBg: 'bg-violet-200' },
         ];
 
-        function openChat() { document.getElementById('start-chat-btn').classList.add('hidden'); document.getElementById('chat-interface').classList.remove('hidden'); }
-        async function sendToGemini() {
-            const input = document.getElementById('chat-input');
-            const history = document.getElementById('chat-history');
-            const text = input.value.trim();
-            if (!text) return;
-            input.value = '';
-            history.innerHTML += `<p class="text-right text-xs bg-white text-[#7CA982] p-2 rounded-lg ml-10"><b>Kamu:</b> ${text}</p>`;
-            // Simulasi AI
-            setTimeout(() => {
-                history.innerHTML += `<p class="text-left text-xs bg-black/10 text-white p-2 rounded-lg mr-10"><b>Si AGBI:</b> Hai! Siap membantu belajar PJOK hari ini. Ada yang ingin ditanyakan?</p>`;
-            }, 600);
-        }
-
-        async function syncData() {
-            try {
-                const resClass = await fetch(CLASS_SHEET_URL);
-                const csvClass = await resClass.text();
-                csvClass.split(/\r?\n/).slice(1).forEach(row => {
-                    const [cls, link] = row.split(',').map(v => v.replace(/"/g, '').trim());
-                    const match = cls?.match(/[1-6]/);
-                    if (match && link?.startsWith('http')) DYNAMIC_CLASS_LINKS[match[0]] = link;
-                });
-                const resGame = await fetch(GAME_SHEET_URL);
-                const csvGame = await resGame.text();
-                csvGame.split(/\r?\n/).slice(1).forEach(row => {
-                    const [key, link] = row.split(',').map(v => v.replace(/"/g, '').trim());
-                    if (key.toLowerCase().includes('tinggi')) GAME_LINKS.tinggi = link;
-                    if (key.toLowerCase().includes('rendah')) GAME_LINKS.rendah = link;
-                });
-                renderUI();
-            } catch (e) { renderUI(); }
-        }
-
-        function renderUI() {
-            document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
-                <div onclick="handleClassClick(${cls.id})" class="p-4 rounded-3xl cursor-pointer ${cls.cardBg} dark:bg-darkmode-card border border-white/50 dark:border-gray-700 flex items-center gap-3 hover:scale-[1.02] transition-all shadow-sm">
-                    <div class="w-10 h-10 ${cls.color} rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0 text-white">${cls.icon}</div>
-                    <div class="min-w-0">
-                        <h4 class="font-bold text-sm text-black dark:text-darkmode-text">${cls.label}</h4>
-                        <p class="text-[10px] font-bold ${DYNAMIC_CLASS_LINKS[cls.id] ? 'text-gray-900' : 'text-red-700'}">
-                            ${DYNAMIC_CLASS_LINKS[cls.id] ? '✅ Aktif' : '❌ Belum Tersedia'}
-                        </p>
-                    </div>
-                </div>
-            `).join('');
-            ['tinggi', 'rendah'].forEach(type => {
-                const el = document.getElementById(`status-${type}`);
-                if (el) { el.textContent = GAME_LINKS[type] ? '✅ Aktif' : '❌ Belum Tersedia'; el.className = GAME_LINKS[type] ? 'text-[9px] font-bold text-black' : 'text-[9px] font-bold text-black'; }
-            });
-        }
-
-        function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Maaf, kelas ini belum dibuka!", "error"); }
-        function handleGameClick(type) { if (GAME_LINKS[type]) window.open(GAME_LINKS[type], '_blank'); else showToast("Maaf, zona permainan belum tersedia!", "error"); }
+        function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Maaf, link kelas belum tersedia!", "error"); }
+        function handleGameClick(type) { if (GAME_LINKS[type]) window.open(GAME_LINKS[type], '_blank'); else showToast("Maaf, link game belum tersedia!", "error"); }
+        
         function showToast(message, type) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -207,7 +262,8 @@
         const weatherForecast = ['Cerah ☀️', 'Berawan ⛅', 'Hujan 🌦️', 'Cerah ☀️', 'Berawan ⛅'];
         const colColors = ['bg-rose-500', 'bg-sky-500', 'bg-emerald-500', 'bg-amber-500', 'bg-fuchsia-500'];
         
-        document.getElementById('current-date-display').textContent = ` - ${new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }).format(now)}`;
+        document.getElementById('current-date-display').textContent = ` (${new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }).format(now)})`;
+        
         const grid = document.getElementById('schedule-grid');
         const currentDayIndex = now.getDay();
         for(let i = 1; i <= 5; i++) {
@@ -220,7 +276,7 @@
                 ${isToday ? '<span class="text-[6px] font-bold uppercase opacity-80 leading-none">Hari ini</span>' : ''}
                 <span class="text-[9px] font-bold block">${daysShort[i]}, ${date.getDate()}</span>
                 <span class="text-[8px] block">${classes[i]}</span>
-                <span class="text-[10px] mt-0.5 block">${weatherForecast[i-1].split(' ')[1]}</span>
+                <span class="text-xl mt-0.5 block">${weatherForecast[i-1].split(' ')[1]}</span>
             `;
             grid.appendChild(div);
         }
