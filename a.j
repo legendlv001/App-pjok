@@ -1,7 +1,0 @@
-{
-  "name": "chat-bot-pjok",
-  "version": "1.0.0",
-  "dependencies": {
-    "node-fetch": "^2.6.7"
-  }
-}
