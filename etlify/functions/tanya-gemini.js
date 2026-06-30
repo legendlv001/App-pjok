@@ -1,4 +1,4 @@
-// netlify/functions/tanya-gemini.js
+// .netlify/functions/tanya-gemini.js
 const { GoogleGenAI } = require('@google/genai');
 
 exports.handler = async function(event, context) {
