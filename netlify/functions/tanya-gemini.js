@@ -1,44 +1,31 @@
-// netlify/functions/tanya-gemini.js
-const { GoogleGenAI } = require('@google/genai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 exports.handler = async function(event, context) {
-  // Pastikan GEMINI_API_KEY sudah dimasukkan di Environment Variables Netlify
+  // Pastikan variabel lingkungan di Netlify bernama GEMINI_API_KEY
   const apiKey = process.env.GEMINI_API_KEY;
   
-  // PERBAIKAN: Inisialisasi SDK yang benar untuk @google/genai
-  const ai = new GoogleGenAI({ apiKey: apiKey });
-
-  // Validasi jika method bukan POST
   if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ error: "Method Not Allowed. Gunakan POST." }),
-    };
+    return { statusCode: 405, body: JSON.stringify({ error: "Method Not Allowed" }) };
   }
 
   try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
     const data = JSON.parse(event.body);
-    
-    // PERBAIKAN: Pemanggilan model menggunakan ai.models.generateContent
-    const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: data.pesan, // Pastikan payload dari frontend mengirimkan properti "pesan"
-    });
+    const result = await model.generateContent(data.pesan);
+    const response = await result.response;
+    const text = response.text();
 
     return {
       statusCode: 200,
-      headers: {
-        "Content-Type": "application/json",
-        // Tambahkan CORS jika frontend Anda di-host di tempat berbeda
-        "Access-Control-Allow-Origin": "*", 
-      },
-      body: JSON.stringify({ balasan: response.text }),
+      headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" },
+      body: JSON.stringify({ balasan: text }),
     };
   } catch (error) {
     return { 
       statusCode: 500, 
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: error.message || error.toString() }) 
+      body: JSON.stringify({ error: error.message }) 
     };
   }
 };
