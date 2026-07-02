@@ -4,6 +4,6 @@
   "description": "",
   "main": "index.html",
   "dependencies": {
-    "@google/genai": "latest"
+  "@google/generative-ai": "latest"
   }
 }
