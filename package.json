@@ -1,9 +1,7 @@
 {
   "name": "chat-ai-gemini",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.html",
   "dependencies": {
-  "@google/generative-ai": "latest"
+    "@google/generative-ai": "latest"
   }
 }
