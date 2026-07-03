@@ -1,35 +1,25 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-exports.handler = async (event, context) => {
+module.exports = async (req, res) => {
   // Hanya izinkan metode POST
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    const { pesan } = JSON.parse(event.body);
+    const { pesan } = req.body;
     
-    // Inisialisasi API dengan key yang tersimpan di environment Netlify
+    // Inisialisasi Gemini
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    
-    // Gunakan model yang didukung secara resmi
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Panggilan fungsi yang benar sesuai dokumentasi
     const result = await model.generateContent(pesan);
     const response = await result.response;
     const text = response.text();
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ balasan: text }),
-    };
+    return res.status(200).json({ balasan: text });
   } catch (error) {
     console.error("Error:", error);
-    return { 
-      statusCode: 500, 
-      body: JSON.stringify({ error: "Gagal memproses permintaan AI" }) 
-    };
+    return res.status(500).json({ error: "Gagal memproses AI" });
   }
 };
