@@ -1,7 +1,12 @@
 {
-  "name": "app-pjok",
+  "name": "pjok-sdn1-parigi",
   "version": "1.0.0",
+  "description": "Backend untuk Si AGBI",
+  "main": "api/tanya-gemini.js",
   "dependencies": {
-    "@google/generative-ai": "^0.1.3"
+    "@google/generative-ai": "^0.21.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
