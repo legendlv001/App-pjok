@@ -9,11 +9,13 @@ exports.handler = async (event, context) => {
   try {
     const { pesan } = JSON.parse(event.body);
     
-    // Inisialisasi Gemini dengan API Key yang ada di Environment Variable Netlify
+    // Inisialisasi Gemini dengan API Key dari Environment Variable Netlify[span_2](start_span)[span_2](end_span)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    
+    // Menggunakan model yang stabil. Jika masih error, coba ganti ke "gemini-pro[span_3](start_span)"[span_3](end_span)
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // Kirim pesan ke model
+    // Kirim pesan ke model[span_4](start_span)[span_4](end_span)
     const result = await model.generateContent(pesan);
     const response = await result.response;
     const text = response.text();
