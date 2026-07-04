@@ -12,7 +12,7 @@
             min-height: 100vh;
         }
         body.dark {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333333 50%, #4a4a4a 100%);
+            background: linear-gradient(135deg, #121212 0%, #242424 50%, #1a252f 100%);
         }
         @keyframes blink { 50% { opacity: 0.3; } }
         .blink { animation: blink 1.5s linear infinite; }
@@ -20,7 +20,7 @@
         .scrollbar-thin::-webkit-scrollbar { width: 4px; }
         .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
         
-        /* Animasi titik-titik mengetik */
+        /* Animasi mengetik asisten */
         .typing-dots span {
             animation: blink-dot 1.4s infinite both;
         }
@@ -30,6 +30,18 @@
             0% { opacity: .2; }
             20% { opacity: 1; }
             100% { opacity: .2; }
+        }
+
+        /* Running Text */
+        .marquee-container { overflow: hidden; width: 100%; }
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translate(100%, 0); }
+            100% { transform: translate(-100%, 0); }
         }
     </style>
     <script>
@@ -50,117 +62,118 @@
         }
     </script>
 </head>
-<body class="text-charcoal dark:text-soft-gray transition-colors duration-300 font-sans min-h-screen pb-10">
+<body class="text-charcoal dark:text-soft-gray transition-colors duration-300 font-sans min-h-screen pb-16">
 
     <div class="max-w-2xl mx-auto p-4">
-        <header class="flex justify-between items-center mb-6 border-b-2 border-light-gold pb-2 bg-white/80 dark:bg-black/40 p-4 rounded-2xl shadow-lg">
-            <h1 class="text-2xl font-bold flex items-center gap-2">
+        <!-- Header Utama -->
+        <header class="flex justify-between items-center mb-6 border-b-4 border-light-gold pb-4 bg-white/80 dark:bg-black/40 backdrop-blur-md p-4 rounded-b-2xl shadow-lg">
+            <h1 class="text-2xl font-bold flex items-center gap-3">
                 <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" alt="Logo" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm">
-                <span class="text-charcoal dark:text-white">PJOK</span>
-                <span class="text-rich-sea-blue dark:text-blue-400">SDN 1</span>
-                <span class="text-light-gold">PARIGI</span>
+                <!-- Judul Memanjang & Bold -->
+                <div class="flex flex-row gap-2 text-xl sm:text-2xl font-extrabold tracking-tight">
+                    <span class="text-charcoal dark:text-white">PJOK</span>
+                    <span class="text-rich-sea-blue dark:text-blue-400">SDN 1</span>
+                    <span class="text-light-gold">PARIGI</span>
+                </div>
             </h1>
-            <button id="theme-toggle" class="p-2 rounded-xl bg-soft-gray dark:bg-gray-700 text-charcoal dark:text-light-gold transition-all font-bold">
-                <span class="block dark:hidden">☀️</span>
-                <span class="hidden dark:block">🌙</span>
+            <button id="theme-toggle" class="p-2.5 rounded-xl bg-soft-gray dark:bg-gray-750 text-charcoal dark:text-light-gold hover:scale-105 active:scale-95 transition-all font-bold shadow-sm" aria-label="Ganti Tema">
+                <span class="block dark:hidden text-lg">☀️</span>
+                <span class="hidden dark:block text-lg">🌙</span>
             </button>
         </header>
 
         <!-- Motivasi Hari Ini -->
         <section id="motivasi-section" class="relative overflow-hidden bg-gradient-to-r from-rich-sea-blue to-blue-500 p-5 rounded-2xl shadow-lg mb-6 text-white border-2 border-white/20 flex items-center gap-4">
-            <!-- Background Decorative Fire Icon -->
             <div class="absolute -right-4 -bottom-4 opacity-15 text-white pointer-events-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 0 1-2.827 0l-4.244-4.243a8 8 0 1 1 11.314 0zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                    <path d="M17.557 11.393c-.612-1.383-1.637-2.522-2.31-3.793-.728-1.373-.836-2.906-.31-4.4a.2.2 0 0 0-.293-.217c-1.326.853-2.53 1.954-3.323 3.32-.823 1.417-1.042 3.125-.658 4.743.085.357-.271.657-.594.475a4.72 4.72 0 0 1-1.927-2.483.2.2 0 0 0-.374-.037 8.163 8.163 0 0 0-.616 3.1c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.914-.672-3.666-1.785-5.043-.133-.165-.39-.1-.422.11a5.454 5.454 0 0 1-1.388 4.28z"/>
                 </svg>
             </div>
-            
-            <!-- Icon Kiri -->
             <div class="flex-shrink-0 bg-white/20 p-3 rounded-2xl border border-white/10 flex items-center justify-center shadow-inner">
-                <!-- SVG Fire Icon -->
                 <svg class="w-8 h-8 text-amber-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 18c-3.31 0-6-2.69-6-6 0-1 .25-1.94.69-2.77C7.45 7.74 9.54 6.5 12 6.5s4.55 1.24 5.31 2.73c.44.83.69 1.77.69 2.77 0 3.31-2.69 6-6 6zm-.72-13.43c-.41-.41-.41-1.07 0-1.48L12 2.41V4c0 .55.45 1 1 1h.59l-.72.72c-.41.41-1.07.41-1.48 0-.41-.42-.41-1.08 0-1.49l-.11-.66zM17.66 8.34a1.003 1.003 0 0 0 0-1.42l-.71-.71a1.003 1.003 0 0 0-1.42 0c-.39.39-.39 1.02 0 1.41l.71.71a.996.996 0 0 0 1.42 0zm-11.32 0l.71-.71c.39-.39.39-1.02 0-1.41a1.003 1.003 0 0 0-1.42 0l-.71.71a1.003 1.003 0 0 0 0 1.42c.39.39 1.03.39 1.42 0zM12 22c-4.41 0-8-3.59-8-8 0-2.39 1.05-4.53 2.72-6.01L5.3 6.56a9.927 9.927 0 0 0-2.3 6.44c0 5.52 4.48 10 10 10s10-4.48 10-10c0-2.36-.82-4.53-2.19-6.24l-1.41 1.41C20.94 9.61 22 11.68 22 14c0 4.41-3.59 8-8 8z" />
-                    <path d="M12 8.5c-1.93 0-3.5 1.57-3.5 3.5 0 1 .5 1.95 1.25 2.56L10.5 15c.5.5.5 1.5 0 2s-1.5.5-2 0l-.75-.75A5.5 5.5 0 0 1 12 6.5c2.48 0 4.5 2.02 4.5 4.5 0 1.49-.6 2.84-1.56 3.84l-.69-.69c.63-.72 1-1.67 1-2.65 0-1.93-1.57-3.5-3.5-3.5z" />
+                    <path d="M17.557 11.393c-.612-1.383-1.637-2.522-2.31-3.793-.728-1.373-.836-2.906-.31-4.4a.2.2 0 0 0-.293-.217c-1.326.853-2.53 1.954-3.323 3.32-.823 1.417-1.042 3.125-.658 4.743.085.357-.271.657-.594.475a4.72 4.72 0 0 1-1.927-2.483.2.2 0 0 0-.374-.037 8.163 8.163 0 0 0-.616 3.1c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.914-.672-3.666-1.785-5.043-.133-.165-.39-.1-.422.11a5.454 5.454 0 0 1-1.388 4.28z"/>
                 </svg>
             </div>
-            
-            <!-- Konten Teks Kanan -->
             <div class="flex-1 text-left relative z-10">
                 <h3 class="text-xs uppercase tracking-widest opacity-95 mb-1 font-bold">
                     Motivasi Hari Ini
                 </h3>
-                <p id="quote-text" class="font-bold text-base sm:text-lg italic">"Tubuh yang sehat adalah rumah bagi jiwa yang kuat."</p>
+                <p id="quote-text" class="font-bold text-base sm:text-lg italic">"Memuat motivasi..."</p>
             </div>
         </section>
 
-        <section class="bg-white/90 dark:bg-darkmode-card p-4 rounded-2xl shadow-sm mb-4 flex items-center gap-4 border border-gray-100 dark:border-gray-700">
-            <div id="avatar-container" onclick="changeAvatar()" class="text-4xl cursor-pointer hover:scale-110 transition-transform bg-gray-200 dark:bg-gray-700 p-2 rounded-full w-16 h-16 flex items-center justify-center">
+        <!-- Profil Murid -->
+        <section class="bg-white/90 dark:bg-darkmode-card p-4 rounded-2xl shadow-sm mb-6 flex items-center gap-4 border border-gray-100 dark:border-gray-700">
+            <div id="avatar-container" onclick="changeAvatar()" class="text-4xl cursor-pointer hover:scale-110 active:scale-95 transition-transform bg-gray-200 dark:bg-gray-700 p-2 rounded-full w-16 h-16 flex items-center justify-center shadow-inner" title="Klik untuk ganti avatar">
                 <span id="avatar">🐸</span>
             </div>
             <div class="flex-1">
-                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-600 focus:border-rich-sea-blue dark:text-white">
-                <p class="text-[10px] text-gray-500">Klik ikon untuk ganti avatar</p>
+                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
+                <p class="text-[10px] text-gray-500 mt-1">Klik ikon hewan untuk ganti avatar</p>
             </div>
         </section>
 
-        <!-- Chat AI Section -->
+        <!-- Chat AI Section (Si AGBI) -->
         <section class="mb-6">
-            <div id="ai-card" class="bg-[#7CA982] p-5 rounded-[32px] text-white shadow-lg border-2 border-white/20">
-                <div class="flex items-center gap-3 mb-3">
-                    <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-12 h-12 rounded-full border-2 border-white object-cover" alt="Avatar">
+            <div id="ai-card" class="bg-[#7CA982] p-5 rounded-[32px] text-white shadow-lg border-2 border-white/20 transition-all duration-300">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-12 h-12 rounded-full border-2 border-white object-cover shadow-md" alt="Avatar">
                     <div>
                         <h3 class="font-bold text-lg">Tanya IA Si AGBI</h3>
                         <p class="text-[10px] opacity-90 uppercase tracking-wide">ASISTEN PJOK SDN 1 PARIGI</p>
                     </div>
                 </div>
-                <button id="start-chat-btn" onclick="openChat()" class="w-full bg-white text-[#7CA982] font-bold py-3 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-100 transition-all">
+                <button id="start-chat-btn" onclick="openChat()" class="w-full bg-white text-[#7CA982] font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-100 active:scale-[0.99] transition-all">
                     <span>💬 Tanya Si AGBI</span>
                 </button>
-                <div id="chat-interface" class="hidden mt-4 bg-black/10 p-3 rounded-2xl border border-white/20">
-                    <div id="chat-history" class="space-y-4 mb-3 h-48 overflow-y-auto text-sm pr-2 scrollbar-thin">
+                <div id="chat-interface" class="hidden mt-4 bg-black/15 p-4 rounded-2xl border border-white/10">
+                    <div id="chat-history" class="space-y-4 mb-4 h-56 overflow-y-auto text-sm pr-2 scrollbar-thin">
                         <div class="flex items-start gap-2">
-                            <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white">
-                            <p class="bg-white/10 p-3 rounded-2xl rounded-tl-none">Halo! Saya Si AGBI, apa yang ingin kamu tanyakan hari ini?</p>
+                            <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                            <p class="bg-white/10 p-3 rounded-2xl rounded-tl-none max-w-[80%]">Halo! Saya Si AGBI, apa yang ingin kamu tanyakan hari ini?</p>
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <input id="chat-input" type="text" placeholder="Tulis pertanyaan..." class="flex-1 p-2 rounded-xl text-charcoal outline-none text-sm" onkeydown="if(event.key === 'Enter') sendToGemini()">
-                        <button onclick="sendToGemini()" class="px-4 py-2 bg-white text-[#7CA982] rounded-xl font-bold text-sm">Kirim</button>
+                        <input id="chat-input" type="text" placeholder="Tulis pertanyaan..." class="flex-1 p-3 rounded-xl text-charcoal outline-none text-sm shadow-inner" onkeydown="if(event.key === 'Enter') sendToGemini()">
+                        <button onclick="sendToGemini()" class="px-5 py-3 bg-white text-[#7CA982] rounded-xl font-bold text-sm shadow-md hover:bg-gray-150 active:scale-95 transition-all">Kirim</button>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Jadwal Olahraga & Cuaca -->
         <section class="mb-6">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2">
                 <span>🗓️</span> Jadwal OlahRaga & Cuaca <span id="current-date-display" class="text-xs text-gray-700 dark:text-gray-400"></span>
             </h2>
-            <div id="schedule-grid" class="grid grid-cols-5 gap-1.5 text-center"></div>
+            <div id="schedule-grid" class="grid grid-cols-5 gap-2 text-center"></div>
         </section>
 
+        <!-- Kelompok Kelas -->
         <section class="mb-6">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎓</span> Kelompok Kelas</h2>
             <div id="materiContainer" class="grid grid-cols-2 gap-4"></div>
         </section>
 
+        <!-- Zona Permainan -->
         <section class="mb-6">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎮</span> Zona Permainan</h2>
             <div class="grid grid-cols-2 gap-3">
-                <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-3 rounded-3xl bg-indigo-500 text-black border border-indigo-600 flex flex-col items-center gap-1 hover:scale-[1.02] transition-all shadow-md">
-                    <span class="text-xl">🧩</span>
+                <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-4 rounded-3xl bg-indigo-500 text-black border border-indigo-600 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                    <span class="text-2xl">🧩</span>
                     <span class="font-bold text-[11px]">Kls Rendah</span>
-                    <span id="status-rendah" class="text-[9px] font-bold opacity-80">...</span>
+                    <span id="status-rendah" class="text-[9px] font-bold opacity-80 bg-white/25 px-2 py-0.5 rounded-full">...</span>
                 </button>
-                <button id="game-tinggi" onclick="handleGameClick('tinggi')" class="p-3 rounded-3xl bg-pink-500 text-black border border-pink-600 flex flex-col items-center gap-1 hover:scale-[1.02] transition-all shadow-md">
-                    <span class="text-xl">🤖</span>
+                <button id="game-tinggi" onclick="handleGameClick('tinggi')" class="p-4 rounded-3xl bg-pink-500 text-black border border-pink-600 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                    <span class="text-2xl">🤖</span>
                     <span class="font-bold text-[11px]">Kls Tinggi</span>
-                    <span id="status-tinggi" class="text-[9px] font-bold opacity-80">...</span>
+                    <span id="status-tinggi" class="text-[9px] font-bold opacity-80 bg-white/25 px-2 py-0.5 rounded-full">...</span>
                 </button>
             </div>
         </section>
 
-        <!-- Akun Sosial Media (Format 2x2 rapi & simetris) -->
-        <section class="mb-6">
+        <!-- Akun Sosial Media -->
+        <section class="mb-16">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>📱</span> Akun Sosial Media 📢</h2>
             <div class="grid grid-cols-2 gap-3">
                 <a href="https://chat.whatsapp.com/LFK7rfB2ynVIX3IFYhdgV9" target="_blank" class="p-3 bg-[#25D366] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
@@ -179,20 +192,29 @@
         </section>
     </div>
 
-    <div id="toast-container" class="fixed bottom-4 left-4 right-4 z-50"></div>
+    <!-- Running Text Footer -->
+    <footer class="fixed bottom-0 left-0 w-full bg-white/90 dark:bg-black/90 backdrop-blur-md py-2 border-t border-gray-200 dark:border-gray-800 marquee-container z-50">
+        <div class="marquee-text font-bold text-gray-700 dark:text-gray-300 text-[11px] uppercase tracking-wide">
+            Aplikasi ini di buat untuk mempermudah dalam mencari dan memahami materi PJOK dan membantu Guru PJOK dalam memberikan tugas, Dll.
+        </div>
+    </footer>
+
+    <!-- Container Toast Notifikasi -->
+    <div id="toast-container" class="fixed bottom-12 left-4 right-4 z-50 flex flex-col gap-2 max-w-sm mx-auto"></div>
 
     <script>
         const apiKey = "";
         const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮'];
-        const quotes = [
-            "Tubuh yang sehat adalah rumah bagi jiwa yang kuat.",
-            "Olahraga bukan hanya tentang otot, tapi tentang disiplin diri.",
-            "Setiap tetes keringat adalah langkah menuju kesehatan yang lebih baik.",
-            "Jangan berhenti saat lelah, berhentilah saat kamu selesai.",
-            "Gerak aktif hari ini adalah investasi masa depanmu!"
-        ];
         
-        document.getElementById('quote-text').textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+        const dailyQuotes = {
+            0: "Minggu Bugar! Istirahat aktif dengan berjalan santai bersama keluarga agar tubuh tetap prima menyambut esok hari. 🚶‍♂️👨‍👩‍👧‍👦",
+            1: "Senin Semangat! Mulai pekanmu dengan peregangan pagi agar pikiran fokus dan tubuh siap menyerap ilmu baru. 🏃‍♂️✨",
+            2: "Selasa Aktif! Jangan malas bergerak. Setiap langkah kecil dan lari kecilmu hari ini menjauhkanmu dari penyakit. ⚽💪",
+            3: "Rabu Tangguh! Olahraga tidak hanya melatih kekuatan ototmu, tetapi juga membangun disiplin dan karakter mental juara. 🏆🏅",
+            4: "Kamis Konsisten! Jaga stamina dengan minum air putih yang cukup dan makan buah segar setelah beraktivitas fisik. 🍎🥛",
+            5: "Jumat Ceria! Keringat sehat yang keluar hari ini adalah bentuk rasa syukur atas tubuh bugar yang kita miliki. 🏸🤸‍♀️",
+            6: "Sabtu Sehat! Gunakan waktu liburmu untuk bersepeda, bermain bola, atau aktivitas fisik menyenangkan lainnya. 🚴‍♂️🏀"
+        };
 
         function changeAvatar() {
             const avatarEl = document.getElementById('avatar');
@@ -206,19 +228,13 @@
             document.getElementById('chat-input').focus();
         }
 
-        // Fungsi bantu fetch dengan Exponential Backoff (retries: 5 kali)
         async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
             try {
                 const response = await fetch(url, options);
-                if (!response.ok) {
-                    throw new Error(`HTTP Error! Status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
                 return await response.json();
             } catch (error) {
-                if (retries === 1) {
-                    throw error;
-                }
-                // Delay berlipat ganda: 1s -> 2s -> 4s -> 8s -> 16s
+                if (retries === 1) throw error;
                 await new Promise(resolve => setTimeout(resolve, delay));
                 return fetchWithRetry(url, options, retries - 1, delay * 2);
             }
@@ -227,24 +243,20 @@
         async function sendToGemini() {
             const input = document.getElementById('chat-input');
             const muridName = document.getElementById('murid-name').value.trim() || "Murid";
-            const muridIcon = document.getElementById('avatar').textContent;
             const history = document.getElementById('chat-history');
             const userText = input.value.trim();
             if (!userText) return;
             
-            // Tambahkan pesan murid ke obrolan
             history.innerHTML += `
                 <div class="flex items-start gap-2 justify-end">
                     <div class="bg-white text-[#7CA982] p-3 rounded-2xl rounded-tr-none font-bold shadow-sm max-w-[80%]">
                         <p class="text-[10px] opacity-70">${muridName}</p>
                         <p>${userText}</p>
                     </div>
-                    <div class="text-2xl">${muridIcon}</div>
                 </div>`;
             input.value = '';
             history.scrollTop = history.scrollHeight;
 
-            // Tambahkan indikator mengetik sementara untuk Si AGBI
             const typingIndicatorId = "typing-indicator-" + Date.now();
             history.innerHTML += `
                 <div id="${typingIndicatorId}" class="flex items-start gap-2">
@@ -263,17 +275,11 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                             contents: [{ parts: [{ text: userText }] }],
-                            systemInstruction: { parts: [{ text: `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Kamu sedang berbicara dengan murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif tentang olahraga serta kesehatan kepada ${muridName}. Gunakan emoji agar menarik bagi siswa sekolah dasar.` }] }
+                            systemInstruction: { parts: [{ text: `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Kamu sedang berbicara dengan murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif.` }] }
                         })
-                    },
-                    5, // 5 kali retries
-                    1000 // mulai dari delay 1 detik
+                    }
                 );
-
-                // Hapus indikator mengetik
-                const indicatorEl = document.getElementById(typingIndicatorId);
-                if (indicatorEl) indicatorEl.remove();
-
+                document.getElementById(typingIndicatorId)?.remove();
                 const reply = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Si AGBI sedang istirahat sejenak.";
                 history.innerHTML += `
                     <div class="flex items-start gap-2">
@@ -281,17 +287,8 @@
                         <p class="bg-black/15 text-white p-3 rounded-2xl rounded-tl-none max-w-[80%]">${reply}</p>
                     </div>`;
             } catch (error) {
-                // Hapus indikator mengetik jika gagal
-                const indicatorEl = document.getElementById(typingIndicatorId);
-                if (indicatorEl) indicatorEl.remove();
-
-                history.innerHTML += `
-                    <div class="flex items-start gap-2">
-                        <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
-                        <p class="bg-red-500/80 text-white p-3 rounded-2xl rounded-tl-none text-xs">
-                            <b>Si AGBI:</b> Koneksi sedang tidak stabil. Silakan dicoba lagi beberapa saat lagi ya!
-                        </p>
-                    </div>`;
+                document.getElementById(typingIndicatorId)?.remove();
+                history.innerHTML += `<p class="text-red-300 text-xs">Error koneksi.</p>`;
             }
             history.scrollTop = history.scrollHeight;
         }
@@ -314,7 +311,6 @@
                         if (match) DYNAMIC_CLASS_LINKS[match[0]] = link;
                     }
                 });
-                
                 const resGame = await fetch(GAME_SHEET_URL);
                 const textGame = await resGame.text();
                 textGame.split('\n').slice(1).forEach(row => {
@@ -332,19 +328,19 @@
 
         function renderUI() {
             document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
-                <div onclick="handleClassClick(${cls.id})" class="p-4 rounded-3xl cursor-pointer ${cls.cardBg} dark:bg-darkmode-card border border-white/50 dark:border-gray-700 flex items-center gap-3 hover:scale-[1.02] transition-all shadow-sm">
+                <div onclick="handleClassClick(${cls.id})" class="p-4 rounded-3xl cursor-pointer ${cls.cardBg} dark:bg-darkmode-card border border-white/50 dark:border-gray-700 flex items-center gap-3 hover:scale-[1.02] active:scale-98 transition-all shadow-sm">
                     <div class="w-10 h-10 ${cls.color} rounded-2xl flex items-center justify-center text-xl shadow-inner shrink-0 text-white">${cls.icon}</div>
                     <div class="min-w-0">
                         <h4 class="font-bold text-sm text-black dark:text-darkmode-text">${cls.label}</h4>
                         <p class="text-[10px] font-bold ${DYNAMIC_CLASS_LINKS[cls.id] ? 'text-green-700 dark:text-green-400' : 'text-red-700'}">
-                            ${DYNAMIC_CLASS_LINKS[cls.id] ? '✅ Aktif' : '❌ Status: Belum Dibuka'}
+                            ${DYNAMIC_CLASS_LINKS[cls.id] ? '✅ Aktif' : '❌ Belum Dibuka'}
                         </p>
                     </div>
                 </div>
             `).join('');
             ['tinggi', 'rendah'].forEach(type => {
                 const el = document.getElementById(`status-${type}`);
-                if (el) { el.textContent = GAME_LINKS[type] ? '✅ Aktif' : '❌ Status: Belum Tersedia'; }
+                if (el) el.textContent = GAME_LINKS[type] ? '✅ Aktif' : '❌ Belum Tersedia';
             });
         }
 
@@ -357,21 +353,14 @@
             { id: 6, label: 'KELAS 6', icon: '🏆', color: 'bg-violet-500', cardBg: 'bg-violet-200' },
         ];
 
-        function handleClassClick(id) { 
-            if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); 
-            else showToast("Maaf, Kelas ini Belum dibuka. Silahkan hubungi Guru PJOKnya 🙏🏻", "error"); 
-        }
-        
-        function handleGameClick(type) { 
-            if (GAME_LINKS[type]) window.open(GAME_LINKS[type], '_blank'); 
-            else showToast("Maaf, Game ini masih belum tersedia. Silahkan hubungi Guru PJOKnya 🙏🏻", "error"); 
-        }
+        function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Kelas ini Belum dibuka.", "error"); }
+        function handleGameClick(type) { if (GAME_LINKS[type]) window.open(GAME_LINKS[type], '_blank'); else showToast("Game belum tersedia.", "error"); }
         
         function showToast(message, type) {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `p-4 rounded-xl shadow-lg mb-2 text-white font-bold text-sm ${type === 'error' ? 'bg-red-500' : 'bg-green-500'} transition-all duration-300 transform scale-100 hover:scale-[1.01]`;
-            toast.textContent = message;
+            toast.className = `p-4 rounded-xl shadow-lg text-white font-bold text-sm ${type === 'error' ? 'bg-red-500' : 'bg-green-500'} flex items-center justify-between`;
+            toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" class="text-lg">×</button>`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 4000);
         }
@@ -388,21 +377,17 @@
         const colColors = ['bg-rose-500', 'bg-sky-500', 'bg-emerald-500', 'bg-amber-500', 'bg-fuchsia-500'];
         
         document.getElementById('current-date-display').textContent = ` (${new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }).format(now)})`;
-        
-        const grid = document.getElementById('schedule-grid');
         const currentDayIndex = now.getDay();
+        document.getElementById('quote-text').textContent = `"${dailyQuotes[currentDayIndex]}"`;
+
+        const grid = document.getElementById('schedule-grid');
         for(let i = 1; i <= 5; i++) {
             const date = new Date();
             date.setDate(now.getDate() - currentDayIndex + i);
             const isToday = (i === currentDayIndex);
             const div = document.createElement('div');
-            div.className = isToday ? "bg-rich-sea-blue text-white p-2 rounded-lg shadow-md blink flex flex-col items-center" : `${colColors[i-1]} text-black p-2 rounded-lg shadow-sm flex flex-col items-center`;
-            div.innerHTML = `
-                ${isToday ? '<span class="text-[6px] font-bold uppercase opacity-80 leading-none">Hari ini</span>' : ''}
-                <span class="text-[9px] font-bold block">${daysShort[i]}, ${date.getDate()}</span>
-                <span class="text-[8px] block">${jadwalMingguan[i] || "-"}</span>
-                <span class="text-xl mt-0.5 block">${weatherForecast[i-1].split(' ')[1]}</span>
-            `;
+            div.className = isToday ? "bg-rich-sea-blue text-white p-2 rounded-lg shadow-md blink" : `${colColors[i-1]} text-black p-2 rounded-lg shadow-sm`;
+            div.innerHTML = `<span class="text-[9px] font-bold">${daysShort[i]}</span><br><span class="text-[8px]">${jadwalMingguan[i]}</span>`;
             grid.appendChild(div);
         }
         syncData();
