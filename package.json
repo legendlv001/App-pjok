@@ -1,12 +1,10 @@
 {
   "name": "pjok-sdn1-parigi",
   "version": "1.0.0",
-  "description": "Backend untuk Si AGBI",
-  "main": "api/tanya-gemini.js",
-  "dependencies": {
-    "@google/generative-ai": "^0.21.0"
-  },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
+  },
+  "dependencies": {
+    // daftar paket atau library aplikasi Anda ada di sini...
   }
 }
