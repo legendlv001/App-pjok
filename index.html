@@ -8,10 +8,9 @@
     <!-- Font Imports -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&family=Ubuntu:wght@500;700&family=Soria&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&family=Abril+Fatface&display=swap" rel="stylesheet">
     
     <style>
-        /* Apply fonts */
         body { 
             font-family: 'Josefin Sans', sans-serif;
             background: linear-gradient(135deg, #2c3e50 0%, #bdc3c7 40%, #d4af37 100%);
@@ -21,8 +20,10 @@
         body.dark {
             background: linear-gradient(135deg, #121212 0%, #242424 50%, #1a252f 100%);
         }
-        .font-ubuntu { font-family: 'Ubuntu', sans-serif; }
-        .font-soria { font-family: 'Soria', serif; }
+        /* Menggunakan font Ravie untuk judul */
+        .font-ravie { font-family: 'Ravie', cursive, sans-serif; }
+        /* Menggunakan font Abril Fatface untuk marquee */
+        .font-abril { font-family: 'Abril Fatface', cursive; }
 
         @keyframes blink { 50% { opacity: 0.3; } }
         .blink { animation: blink 1.5s linear infinite; }
@@ -30,7 +31,6 @@
         .scrollbar-thin::-webkit-scrollbar { width: 4px; }
         .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
         
-        /* Animasi mengetik asisten */
         .typing-dots span {
             animation: blink-dot 1.4s infinite both;
         }
@@ -75,12 +75,10 @@
 <body class="text-charcoal dark:text-soft-gray transition-colors duration-300 min-h-screen pb-16">
 
     <div class="max-w-2xl mx-auto p-4">
-        <!-- Header Utama -->
         <header class="flex justify-between items-center mb-6 border-b-4 border-light-gold pb-4 bg-white/80 dark:bg-black/40 backdrop-blur-md p-4 rounded-b-2xl shadow-lg">
-            <h1 class="text-2xl font-bold flex items-center gap-3 font-ubuntu">
+            <h1 class="text-xl sm:text-2xl font-bold flex items-center gap-3 font-ravie">
                 <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" alt="Logo" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm">
-                <!-- Judul Memanjang, Bold, dan Bergaris Bawah -->
-                <div class="flex flex-row gap-2 text-xl sm:text-2xl font-extrabold tracking-tight underline decoration-light-gold decoration-4 underline-offset-4">
+                <div class="flex flex-row gap-2 tracking-tight underline decoration-light-gold decoration-4 underline-offset-4">
                     <span class="text-charcoal dark:text-white">PJOK</span>
                     <span class="text-rich-sea-blue dark:text-blue-400">SDN 1</span>
                     <span class="text-light-gold">PARIGI</span>
@@ -92,7 +90,6 @@
             </button>
         </header>
 
-        <!-- Motivasi Hari Ini -->
         <section id="motivasi-section" class="relative overflow-hidden bg-gradient-to-r from-rich-sea-blue to-blue-500 p-5 rounded-2xl shadow-lg mb-6 text-white border-2 border-white/20 flex items-center gap-4">
             <div class="absolute -right-4 -bottom-4 opacity-15 text-white pointer-events-none">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24" fill="currentColor" viewBox="0 0 24 24">
@@ -112,7 +109,6 @@
             </div>
         </section>
 
-        <!-- Profil Murid -->
         <section class="bg-white/90 dark:bg-darkmode-card p-4 rounded-2xl shadow-sm mb-6 flex items-center gap-4 border border-gray-100 dark:border-gray-700">
             <div id="avatar-container" onclick="changeAvatar()" class="text-4xl cursor-pointer hover:scale-110 active:scale-95 transition-transform bg-gray-200 dark:bg-gray-700 p-2 rounded-full w-16 h-16 flex items-center justify-center shadow-inner" title="Klik untuk ganti avatar">
                 <span id="avatar">🐸</span>
@@ -123,13 +119,12 @@
             </div>
         </section>
 
-        <!-- Chat AI Section (Si AGBI) -->
         <section class="mb-6">
             <div id="ai-card" class="bg-[#7CA982] p-5 rounded-[32px] text-white shadow-lg border-2 border-white/20 transition-all duration-300">
                 <div class="flex items-center gap-3 mb-4">
                     <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-12 h-12 rounded-full border-2 border-white object-cover shadow-md" alt="Avatar">
                     <div>
-                        <h3 class="font-bold text-lg font-ubuntu">Tanya IA Si AGBI</h3>
+                        <h3 class="font-bold text-lg">Tanya IA Si AGBI</h3>
                         <p class="text-[10px] opacity-90 uppercase tracking-wide">ASISTEN PJOK SDN 1 PARIGI</p>
                     </div>
                 </div>
@@ -153,7 +148,7 @@
 
         <!-- Jadwal Olahraga & Cuaca -->
         <section class="mb-6">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2 font-ubuntu">
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2">
                 <span>🗓️</span> Jadwal OlahRaga & Cuaca <span id="current-date-display" class="text-xs text-gray-700 dark:text-gray-400"></span>
             </h2>
             <div id="schedule-grid" class="grid grid-cols-5 gap-2 text-center"></div>
@@ -161,13 +156,13 @@
 
         <!-- Kelompok Kelas -->
         <section class="mb-6">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2 font-ubuntu"><span>🎓</span> Kelompok Kelas</h2>
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎓</span> Kelompok Kelas</h2>
             <div id="materiContainer" class="grid grid-cols-2 gap-4"></div>
         </section>
 
         <!-- Zona Permainan -->
         <section class="mb-6">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2 font-ubuntu"><span>🎮</span> Zona Permainan</h2>
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎮</span> Zona Permainan</h2>
             <div class="grid grid-cols-2 gap-3">
                 <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-4 rounded-3xl bg-indigo-500 text-black border border-indigo-600 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
                     <span class="text-2xl">🧩</span>
@@ -184,7 +179,7 @@
 
         <!-- Akun Sosial Media -->
         <section class="mb-16">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2 font-ubuntu"><span>📱</span> Akun Sosial Media 📢</h2>
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>📱</span> Akun Sosial Media 📢</h2>
             <div class="grid grid-cols-2 gap-3">
                 <a href="https://chat.whatsapp.com/LFK7rfB2ynVIX3IFYhdgV9" target="_blank" class="p-3 bg-[#25D366] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
                     <span class="text-lg">💬</span> WhatsApp Group
@@ -204,7 +199,7 @@
 
     <!-- Running Text Footer -->
     <footer class="fixed bottom-0 left-0 w-full bg-white/90 dark:bg-black/90 backdrop-blur-md py-2 border-t border-gray-200 dark:border-gray-800 marquee-container z-50">
-        <div class="marquee-text font-bold text-gray-700 dark:text-gray-300 text-[9px] uppercase tracking-wide font-soria">
+        <div class="marquee-text font-bold text-gray-700 dark:text-gray-300 text-[8px] uppercase tracking-wide font-abril">
             📌📢 Aplikasi ini di buat untuk mempermudah dalam mencari dan memahami materi PJOK dan membantu Guru PJOK dalam memberikan tugas, Dll. 👋🏻
         </div>
     </footer>
