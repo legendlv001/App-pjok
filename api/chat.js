@@ -1,20 +1,30 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).end();
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
-    const { prompt, muridName } = req.body;
+    // Pastikan GEMINI_API_KEY sudah diatur di Environment Variables Vercel
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    // Pastikan struktur data seperti di bawah ini
-    const result = await model.generateContent(prompt);
     
+    // Menggunakan model yang terdeteksi di akun Anda
+    const model = genAI.getGenerativeModel({ model: "gemini-3.5-flash" });
+
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required" });
+    }
+
+    const result = await model.generateContent(prompt);
     const response = await result.response;
-    res.status(200).json({ text: response.text() });
+    const text = response.text();
+
+    res.status(200).json({ text: text });
   } catch (error) {
     console.error("Backend Error:", error);
-    res.status(500).json({ text: "Maaf, Si AGBI sedang sibuk." });
+    res.status(500).json({ error: "Gagal memproses permintaan AI" });
   }
 }
