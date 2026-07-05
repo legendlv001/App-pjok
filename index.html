@@ -292,7 +292,7 @@ if (!response.ok) throw new Error("Gagal terhubung ke server");
 const responseData = await response.json();
                 
                 document.getElementById(typingIndicatorId)?.remove();
-                const reply = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Si AGBI sedang istirahat sejenak.";
+                const reply = responseData.text || "Maaf, Si AGBI sedang istirahat sejenak.";
                 history.innerHTML += `
                     <div class="flex items-start gap-2">
                         <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
