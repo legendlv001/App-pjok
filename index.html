@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PJOK SDN 1 PARIGI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;700&family=Abril+Fatface&family=VT323&family=Henny+Penny&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { 
+            font-family: 'Josefin Sans', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #bdc3c7 40%, #d4af37 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        body.dark {
+            background: linear-gradient(135deg, #121212 0%, #242424 50%, #1a252f 100%);
+        }
+        .font-ravie { font-family: 'Ravie', cursive, sans-serif; }
+        .font-abril { font-family: 'Abril Fatface', cursive; }
+        .font-vt { font-family: 'VT323', monospace; }
+
+        .header-custom {
+            background: linear-gradient(180deg, #3D79BA 0%, #E0F6FF 50%, #E5B272 100%);
+            padding: 8px 0; 
+            border-bottom-left-radius: 1rem;
+            border-bottom-right-radius: 1rem;
+            color: #333;
+        }
+
+        .kolom-teks {
+            background: linear-gradient(180deg, #FF5733, #FFC300, #33FF57);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        @keyframes blink { 50% { opacity: 0.3; } }
+        .blink { animation: blink 1.5s linear infinite; }
+        .scrollbar-thin::-webkit-scrollbar { width: 4px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+        
+        .typing-dots span {
+            animation: blink-dot 1.4s infinite both;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: .2s; }
+        .typing-dots span:nth-child(3) { animation-delay: .4s; }
+        @keyframes blink-dot {
+            0% { opacity: .2; }
+            20% { opacity: 1; }
+            100% { opacity: .2; }
+        }
+
+        .marquee-container { overflow: hidden; width: 100%; }
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translate(100%, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+        .font-henny { font-family: 'Henny Penny', cursive; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'charcoal': '#1A1A1A',
+                        'light-gold': '#D4AF37',
+                        'rich-sea-blue': '#006994',
+                        'soft-gray': '#F1F1F1',
+                        'darkmode-card': '#252525',
+                        'darkmode-text': '#E5E5E5'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-charcoal dark:text-soft-gray transition-colors duration-300 min-h-screen pb-16">
+
+    <header class="header-custom border-b-4 border-light-gold shadow-lg w-full mb-6">
+        <div class="w-full max-w-xl lg:max-w-2xl mx-auto px-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" alt="Logo" class="w-14 h-14 rounded-full border-2 border-white object-cover shadow-sm">
+                <div class="flex flex-col">
+                    <h1 class="text-xl sm:text-2xl font-bold flex items-center gap-2 font-ravie">
+                        <div class="flex flex-row gap-2 tracking-tight underline decoration-light-gold decoration-4 underline-offset-4">
+                            <span class="text-charcoal">PJOK</span>
+                            <span class="text-rich-sea-blue">SDN 1</span>
+                            <span class="text-light-gold">PARIGI</span>
+                        </div>
+                    </h1>
+                    <p class="text-[10px] text-black font-medium mt-0.5">
+                        <i class="fa-solid fa-location-dot mr-1"></i> Kecamatan Daha Selatan
+                    </p>
+                </div>
+            </div>
+            <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/50 text-charcoal hover:scale-105 active:scale-95 transition-all shadow-sm">
+                <span class="block dark:hidden text-lg leading-none">☀️</span>
+                <span class="hidden dark:block text-lg leading-none">🌙</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="w-full max-w-xl lg:max-w-2xl mx-auto p-4 pt-0">
+        <section id="info-app-section" class="relative mb-4 kolom-teks shadow-sm border border-gray-100 dark:border-gray-700 animate-fade-in hidden py-2 px-4">
+            <div class="flex items-center gap-3 w-full">
+                <span class="text-xl flex-shrink-0 scale-x-[-1]">📢</span>
+                <div class="w-0.5 bg-charcoal/30 self-stretch min-h-[1.5rem]"></div>
+                <div id="info-app-content" class="text-base font-vt text-charcoal w-full"></div>
+            </div>
+        </section>
+
+        <section id="motivasi-section" class="relative overflow-hidden bg-gradient-to-r from-rich-sea-blue to-blue-500 p-3 rounded-2xl shadow-lg mb-6 text-white border-2 border-white/20 flex items-center gap-4">
+            <div class="flex-shrink-0 bg-white/20 p-2 rounded-2xl border border-white/10 flex items-center justify-center shadow-inner">
+                <svg class="w-6 h-6 text-amber-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.557 11.393c-.612-1.383-1.637-2.522-2.31-3.793-.728-1.373-.836-2.906-.31-4.4a.2.2 0 0 0-.293-.217c-1.326.853-2.53 1.954-3.323 3.32-.823 1.417-1.042 3.125-.658 4.743.085.357-.271.657-.594.475a4.72 4.72 0 0 1-1.927-2.483.2.2 0 0 0-.374-.037 8.163 8.163 0 0 0-.616 3.1c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.914-.672-3.666-1.785-5.043-.133-.165-.39-.1-.422.11a5.454 5.454 0 0 1-1.88 4.28z"/>
+                </svg>
+            </div>
+            <div class="flex-1 text-left relative z-10">
+                <h3 class="text-[10px] uppercase tracking-widest opacity-95 mb-0.5 font-bold">Motivasi Hari Ini</h3>
+                <p id="quote-text" class="font-bold text-sm italic leading-tight">"Memuat motivasi..."</p>
+            </div>
+        </section>
+
+        <section class="bg-white/90 dark:bg-darkmode-card p-4 rounded-2xl shadow-sm mb-6 flex items-center gap-4 border border-gray-100 dark:border-gray-700">
+            <div id="avatar-container" onclick="changeAvatar()" class="text-4xl cursor-pointer hover:scale-110 active:scale-95 transition-transform bg-gray-200 dark:bg-gray-700 p-2 rounded-full w-16 h-16 flex items-center justify-center shadow-inner" title="Klik untuk ganti avatar">
+                <span id="avatar">🐸</span>
+            </div>
+            <div class="flex-1">
+                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
+                <p class="text-[10px] text-gray-500 mt-1">Klik ikon hewan untuk ganti avatar</p>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <div id="ai-card" class="bg-[#7CA982] p-5 rounded-[32px] text-white shadow-lg border-2 border-white/20 transition-all duration-300">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-12 h-12 rounded-full border-2 border-white object-cover shadow-md" alt="Avatar">
+                    <div>
+                        <h3 class="font-bold text-lg">Tanya IA Si AGBI</h3>
+                        <p class="text-[10px] opacity-90 uppercase tracking-wide">ASISTEN PJOK SDN 1 PARIGI</p>
+                    </div>
+                </div>
+                <button id="start-chat-btn" onclick="openChat()" class="w-full bg-white text-[#7CA982] font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-100 active:scale-[0.99] transition-all">
+                    <span>💬 Tanya Si AGBI</span>
+                </button>
+                <div id="chat-interface" class="hidden mt-4 bg-black/15 p-4 rounded-2xl border border-white/10">
+                    <div id="chat-history" class="space-y-4 mb-4 h-56 overflow-y-auto text-sm pr-2 scrollbar-thin">
+                        <div class="flex items-start gap-2">
+                            <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                            <p class="bg-white/10 p-3 rounded-2xl rounded-tl-none max-w-[80%]">Halo! Saya Si AGBI, apa yang ingin kamu tanyakan hari ini?</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <input id="chat-input" type="text" placeholder="Tulis pertanyaan..." class="flex-1 p-3 rounded-xl text-charcoal outline-none text-sm shadow-inner" onkeydown="if(event.key === 'Enter') sendToGemini()">
+                        <button onclick="sendToGemini()" class="px-5 py-3 bg-white text-[#7CA982] rounded-xl font-bold text-sm shadow-md hover:bg-gray-150 active:scale-95 transition-all">Kirim</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2">
+                <span>🗓️</span> Jadwal OlahRaga & Cuaca <span id="current-date-display" class="text-xs text-gray-700 dark:text-gray-400"></span>
+            </h2>
+            <div id="schedule-grid" class="grid grid-cols-5 gap-2 text-center"></div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎓</span> Kelompok Kelas</h2>
+            <div id="materiContainer" class="grid grid-cols-2 gap-4"></div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎮</span> Zona Permainan</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <button id="game-rendah" onclick="handleGameClick('rendah')" class="p-4 rounded-3xl bg-indigo-500 text-black border border-indigo-600 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                    <span class="text-2xl">🧩</span>
+                    <span class="font-bold text-[13px]">Kls Rendah</span>
+                    <span id="status-rendah" class="text-[11px] font-bold opacity-80 bg-white/25 px-2 py-0.5 rounded-full">...</span>
+                </button>
+                <button id="game-tinggi" onclick="handleGameClick('tinggi')" class="p-4 rounded-3xl bg-pink-500 text-black border border-pink-600 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                    <span class="text-2xl">🤖</span>
+                    <span class="font-bold text-[13px]">Kls Tinggi</span>
+                    <span id="status-tinggi" class="text-[11px] font-bold opacity-80 bg-white/25 px-2 py-0.5 rounded-full">...</span>
+                </button>
+            </div>
+        </section>
+
+        <section class="mb-16">
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>📱</span> Akun Sosial Media 📢</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <a href="https://chat.whatsapp.com/LFK7rfB2ynVIX3IFYhdgV9" target="_blank" class="p-3 bg-[#25D366] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
+                    <span class="text-lg">💬</span> WhatsApp Group
+                </a>
+                <a href="https://www.instagram.com/sdn1.parigi_media?igsh=MnIxanFyZDNrY2l5" target="_blank" class="p-3 bg-[#E1306C] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
+                    <span class="text-lg">📸</span> Instagram SDN 1
+                </a>
+                <a href="https://youtube.com/@media.sdn1_prg?si=VkwHC2MahlsCAIm-" target="_blank" class="p-3 bg-[#FF0000] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
+                    <span class="text-lg">▶️</span> YouTube SDN 1
+                </a>
+                <a href="https://youtube.com/@mbulgaming6850?si=V4pwcIJ2OHaHchs5" target="_blank" class="p-3 bg-[#CC0000] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
+                    <span class="text-lg">▶️</span> YouTube Guru PJOK
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <footer class="fixed bottom-0 left-0 w-full bg-[#00963c] backdrop-blur-md py-0 border-t border-emerald-700 marquee-container z-50">
+        <div class="marquee-text font-bold text-white text-[8px] uppercase tracking-wide font-henny leading-none">
+            📌📢 Aplikasi ini di buat untuk mempermudah dalam mencari dan memahami materi PJOK dan membantu Guru PJOK dalam memberikan tugas, Dll. 👋🏻
+        </div>
+    </footer>
+
+    <div id="toast-container" class="fixed bottom-12 left-4 right-4 z-50 flex flex-col gap-2 max-w-sm mx-auto"></div>
+
+    <script>
+        const apiKey = "";
+        const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮', '🦋', '🕷️', '🦈', '🐥', '🦓', '🦝', '🐻‍❄️', '🐺', '🐵', '🧕', '🧑🏻‍💼'];
+        
+        const dailyQuotes = {
+            0: "Minggu Bugar! Istirahat aktif dengan berjalan santai bersama keluarga agar tubuh tetap prima menyambut esok hari. 🚶‍♂️👨‍👩‍👧‍👦",
+            1: "Senin Semangat! Mulai pekanmu dengan peregangan pagi agar pikiran fokus dan tubuh siap menyerap ilmu baru. 🏃‍♂️✨",
+            2: "Selasa Aktif! Jangan malas bergerak. Setiap langkah kecil dan lari kecilmu hari ini menjauhkanmu dari penyakit. ⚽💪",
+            3: "Rabu Tangguh! Olahraga tidak hanya melatih kekuatan ototmu, tetapi juga membangun disiplin dan karakter mental juara. 🏆🏅",
+            4: "Kamis Konsisten! Jaga stamina dengan minum air putih yang cukup dan makan buah segar setelah beraktivitas fisik. 🍎🥛",
+            5: "Jumat Ceria! Keringat sehat yang keluar hari ini adalah bentuk rasa syukur atas tubuh bugar yang kita miliki. 🏸🤸‍♀️",
+            6: "Sabtu Sehat! Gunakan waktu liburmu untuk bersepeda, bermain bola, atau aktivitas fisik menyenangkan lainnya. 🚴‍♂️🏀"
+        };
+
+        function changeAvatar() {
+            const avatarEl = document.getElementById('avatar');
+            const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+            avatarEl.textContent = randomAvatar;
+        }
+
+        function openChat() { 
+            document.getElementById('start-chat-btn').classList.add('hidden'); 
+            document.getElementById('chat-interface').classList.remove('hidden'); 
+            document.getElementById('chat-input').focus();
+        }
+
+        async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+                return await response.json();
+            } catch (error) {
+                if (retries === 1) throw error;
+                await new Promise(resolve => setTimeout(resolve, delay));
+                return fetchWithRetry(url, options, retries - 1, delay * 2);
+            }
+        }
+
+        async function sendToGemini() {
+            const input = document.getElementById('chat-input');
+            const muridName = document.getElementById('murid-name').value.trim() || "Murid";
+            const history = document.getElementById('chat-history');
+            const userText = input.value.trim();
+            if (!userText) return;
+            
+            history.innerHTML += `
+                <div class="flex items-start gap-2 justify-end">
+                    <div class="bg-white text-[#7CA982] p-3 rounded-2xl rounded-tr-none font-bold shadow-sm max-w-[80%]">
+                        <p class="text-[10px] opacity-70">${muridName}</p>
+                        <p>${userText}</p>
+                    </div>
+                </div>`;
+            input.value = '';
+            history.scrollTop = history.scrollHeight;
+
+            const typingIndicatorId = "typing-indicator-" + Date.now();
+            history.innerHTML += `
+                <div id="${typingIndicatorId}" class="flex items-start gap-2">
+                    <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                    <p class="bg-black/10 text-white p-3 rounded-2xl rounded-tl-none typing-dots">
+                        Si AGBI sedang mengetik<span>.</span><span>.</span><span>.</span>
+                    </p>
+                </div>`;
+            history.scrollTop = history.scrollHeight;
+
+            try {
+                const responseData = await fetchWithRetry(
+                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: userText }] }],
+                            systemInstruction: { parts: [{ text: `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Kamu sedang berbicara dengan murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif.` }] }
+                        })
+                    }
+                );
+                document.getElementById(typingIndicatorId)?.remove();
+                const reply = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Si AGBI sedang istirahat sejenak.";
+                history.innerHTML += `
+                    <div class="flex items-start gap-2">
+                        <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                        <p class="bg-black/15 text-white p-3 rounded-2xl rounded-tl-none max-w-[80%]">${reply}</p>
+                    </div>`;
+            } catch (error) {
+                document.getElementById(typingIndicatorId)?.remove();
+                history.innerHTML += `<p class="text-red-300 text-xs">Error koneksi.</p>`;
+            }
+            history.scrollTop = history.scrollHeight;
+        }
+        
+        const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
+        const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
+        const INFO_SHEET_URL = "https://docs.google.com/spreadsheets/d/15kERx3m-kD4_ZhTlhdAz5K60tvcXtXn5xcE5xQfMXF0/export?format=csv";
+        let DYNAMIC_CLASS_LINKS = {};
+        let GAME_LINKS = {};
+
+        async function syncData() {
+            try {
+                const resInfo = await fetch(INFO_SHEET_URL);
+                const textInfo = await resInfo.text();
+                const infoContainer = document.getElementById('info-app-content');
+                const infoSection = document.getElementById('info-app-section');
+                
+                const lines = textInfo.split('\n').filter(l => l.trim() !== "");
+                if (lines.length > 0) {
+                    infoContainer.innerHTML = `<h3 class="font-bold text-black font-vt text-lg mb-2">📌Apa saja yang baru di Aplikasi PJOK SDN 1 Parigi Ini...!</h3>` + 
+                        lines.slice(1).map(line => `<p class="mb-1 text-charcoal font-vt text-base">${line.replace(/"/g, '')}</p>`).join('');
+                    infoSection.classList.remove('hidden');
+                }
+
+                const resClass = await fetch(CLASS_SHEET_URL);
+                const textClass = await resClass.text();
+                textClass.split('\n').slice(1).forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) {
+                        const cls = cols[0].replace(/"/g, '').trim();
+                        const link = cols[1].replace(/"/g, '').trim();
+                        const match = cls.match(/\d+/);
+                        if (match) DYNAMIC_CLASS_LINKS[match[0]] = link;
+                    }
+                });
+                const resGame = await fetch(GAME_SHEET_URL);
+                const textGame = await resGame.text();
+                textGame.split('\n').slice(1).forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) {
+                        const key = cols[0].replace(/"/g, '').trim().toLowerCase();
+                        const link = cols[1].replace(/"/g, '').trim();
+                        if (key.includes('tinggi')) GAME_LINKS.tinggi = link;
+                        if (key.includes('rendah')) GAME_LINKS.rendah = link;
+                    }
+                });
+                renderUI();
+            } catch (e) { console.error("Sync gagal", e); renderUI(); }
+        }
+
+        function renderUI() {
+            document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
+                <div onclick="handleClassClick(${cls.id})" class="p-3 rounded-2xl cursor-pointer ${cls.cardBg} dark:bg-darkmode-card border border-white/50 dark:border-gray-700 flex items-center gap-2 hover:scale-[1.02] active:scale-98 transition-all shadow-sm">
+                    <div class="w-8 h-8 ${cls.color} rounded-xl flex items-center justify-center text-sm shadow-inner shrink-0 text-white">${cls.icon}</div>
+                    <div class="min-w-0">
+                        <h4 class="font-bold text-[13px] text-black dark:text-darkmode-text">${cls.label}</h4>
+                        <p class="text-[11px] font-bold ${DYNAMIC_CLASS_LINKS[cls.id] ? 'text-green-700 dark:text-green-400' : 'text-red-700'}">
+                            ${DYNAMIC_CLASS_LINKS[cls.id] ? '✅ Aktif' : '❌ Belum Dibuka'}
+                        </p>
+                    </div>
+                </div>
+            `).join('');
+            ['tinggi', 'rendah'].forEach(type => {
+                const el = document.getElementById(`status-${type}`);
+                if (el) el.textContent = GAME_LINKS[type] ? '✅ Aktif' : '❌ Belum Tersedia';
+            });
+        }
+
+        const KELOMPOK_DATA = [
+            { id: 1, label: 'KELAS 1', icon: '⚽', color: 'bg-red-500', cardBg: 'bg-red-200' },
+            { id: 2, label: 'KELAS 2', icon: '🏀', color: 'bg-orange-500', cardBg: 'bg-orange-200' },
+            { id: 3, label: 'KELAS 3', icon: '🎾', color: 'bg-yellow-500', cardBg: 'bg-yellow-200' },
+            { id: 4, label: 'KELAS 4', icon: '🏸', color: 'bg-green-500', cardBg: 'bg-green-200' },
+            { id: 5, label: 'KELAS 5', icon: '🏐', color: 'bg-cyan-500', cardBg: 'bg-cyan-200' },
+            { id: 6, label: 'KELAS 6', icon: '🏆', color: 'bg-violet-500', cardBg: 'bg-violet-200' },
+        ];
+
+        function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Kelas ini Belum dibuka.", "error"); }
+        function handleGameClick(type) { if (GAME_LINKS[type]) window.open(GAME_LINKS[type], '_blank'); else showToast("Game belum tersedia.", "error"); }
+        
+        function showToast(message, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `p-4 rounded-xl shadow-lg text-white font-bold text-sm ${type === 'error' ? 'bg-red-500' : 'bg-green-500'} flex items-center justify-between`;
+            toast.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" class="text-lg">×</button>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            document.body.classList.toggle('dark');
+        });
+        
+        const now = new Date();
+        const daysShort = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+        const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        const jadwalMingguan = { 1: "Kls 3", 2: "Kls 4", 3: "Kls 5", 4: "Kls 6", 5: "Kls 1&2" };
+        const weatherForecast = ['Cerah ☀️', 'Berawan ⛅', 'Hujan 🌦️', 'Cerah ☀️', 'Berawan ⛅'];
+        const colColors = ['bg-rose-500', 'bg-sky-500', 'bg-emerald-500', 'bg-amber-500', 'bg-fuchsia-500'];
+        
+        document.getElementById('current-date-display').textContent = ` (${new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }).format(now)})`;
+        const currentDayIndex = now.getDay();
+        document.getElementById('quote-text').textContent = `"${dailyQuotes[currentDayIndex]}"`;
+
+        const grid = document.getElementById('schedule-grid');
+        for(let i = 1; i <= 5; i++) {
+            const date = new Date();
+            date.setDate(now.getDate() - currentDayIndex + i);
+            const isToday = (i === currentDayIndex);
+            const div = document.createElement('div');
+            div.className = isToday ? "bg-rich-sea-blue text-white p-2 rounded-lg shadow-md blink flex flex-col items-center justify-between min-h-[70px]" : `${colColors[i-1]} text-black p-2 rounded-lg shadow-sm flex flex-col items-center justify-between min-h-[70px]`;
+            div.innerHTML = `
+                ${isToday ? '<span class="text-[6px] font-bold uppercase opacity-80 leading-none">Hari ini</span>' : ''}
+                <span class="text-[13px] font-bold block">${daysShort[i]}, ${date.getDate()} ${monthsShort[date.getMonth()]}</span>
+                <span class="text-[12px] block font-semibold">${jadwalMingguan[i] || "-"}</span>
+                <span class="text-xl mt-0.5 block">${weatherForecast[i-1].split(' ')[1]}</span>
+            `;
+            grid.appendChild(div);
+        }
+        syncData();
+    </script>
+</body>
+</html>
