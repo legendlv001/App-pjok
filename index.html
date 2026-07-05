@@ -224,7 +224,7 @@
     <div id="toast-container" class="fixed bottom-12 left-4 right-4 z-50 flex flex-col gap-2 max-w-sm mx-auto"></div>
 
     <script>
-        const apiKey = "";
+        const apiKey = ""; // Kosongkan agar aman
         const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮', '🦋', '🕷️', '🦈', '🐥', '🦓', '🦝', '🐻‍❄️', '🐺', '🐵', '🧕', '🧑🏻‍💼'];
         
         const dailyQuotes = {
@@ -247,18 +247,6 @@
             document.getElementById('start-chat-btn').classList.add('hidden'); 
             document.getElementById('chat-interface').classList.remove('hidden'); 
             document.getElementById('chat-input').focus();
-        }
-
-        async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                if (retries === 1) throw error;
-                await new Promise(resolve => setTimeout(resolve, delay));
-                return fetchWithRetry(url, options, retries - 1, delay * 2);
-            }
         }
 
         async function sendToGemini() {
@@ -289,17 +277,20 @@
             history.scrollTop = history.scrollHeight;
 
             try {
-                const responseData = await fetchWithRetry(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: userText }] }],
-                            systemInstruction: { parts: [{ text: `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Kamu sedang berbicara dengan murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif.` }] }
-                        })
-                    }
-                );
+
+           // Ganti baris 280-290 dengan kode ini:
+const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+        prompt: userText,
+        muridName: muridName 
+    })
+});
+
+if (!response.ok) throw new Error("Gagal terhubung ke server");
+const responseData = await response.json();
+                
                 document.getElementById(typingIndicatorId)?.remove();
                 const reply = responseData.candidates?.[0]?.content?.parts?.[0]?.text || "Maaf, Si AGBI sedang istirahat sejenak.";
                 history.innerHTML += `
