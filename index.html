@@ -136,7 +136,10 @@
                 <span id="avatar">🐸</span>
             </div>
             <div class="flex-1">
-                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
+                <div class="flex items-center gap-2">
+                    <span id="avatar-preview" class="text-xl">🐸</span>
+                    <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
+                </div>
                 <p class="text-[10px] text-gray-500 mt-1">Klik ikon hewan untuk ganti avatar</p>
             </div>
         </section>
@@ -225,6 +228,7 @@
 
     <script>
         const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮', '🦋', '🕷️', '🦈', '🐥', '🦓', '🦝', '🐻‍❄️', '🐺', '🐵', '🧕', '🧑🏻‍💼'];
+        let currentAvatarIndex = 0;
         
         const dailyQuotes = {
             0: "Minggu Bugar! Istirahat aktif dengan berjalan santai bersama keluarga agar tubuh tetap prima menyambut esok hari. 🚶‍♂️👨‍👩‍👧‍👦",
@@ -238,8 +242,10 @@
 
         function changeAvatar() {
             const avatarEl = document.getElementById('avatar');
-            const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
-            avatarEl.textContent = randomAvatar;
+            const previewEl = document.getElementById('avatar-preview');
+            currentAvatarIndex = (currentAvatarIndex + 1) % avatars.length;
+            avatarEl.textContent = avatars[currentAvatarIndex];
+            previewEl.textContent = avatars[currentAvatarIndex];
         }
 
         function openChat() { 
@@ -260,18 +266,20 @@
             }
         }
 
-async function sendToGemini() {
+        async function sendToGemini() {
     const input = document.getElementById('chat-input');
     const muridName = document.getElementById('murid-name').value.trim() || "Murid";
     const history = document.getElementById('chat-history');
     const userText = input.value.trim();
+    // Mendapatkan ikon avatar saat ini
+    const currentAvatar = document.getElementById('avatar').textContent;
     if (!userText) return;
     
-    // Tampilkan pesan user ke layar
+    // Tampilkan pesan user ke layar dengan ikon avatar
     history.innerHTML += `
         <div class="flex items-start gap-2 justify-end">
             <div class="bg-white text-[#7CA982] p-3 rounded-2xl rounded-tr-none font-bold shadow-sm max-w-[80%]">
-                <p class="text-[10px] opacity-70">${muridName}</p>
+                <p class="text-[10px] opacity-70">${currentAvatar} ${muridName}</p>
                 <p>${userText}</p>
             </div>
         </div>`;
@@ -279,40 +287,39 @@ async function sendToGemini() {
     history.scrollTop = history.scrollHeight;
 
     const typingIndicatorId = "typing-indicator-" + Date.now();
-    history.innerHTML += `
-        <div id="${typingIndicatorId}" class="flex items-start gap-2">
-            <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
-            <p class="bg-black/15 text-white p-3 rounded-2xl rounded-tl-none typing-dots">
-                Si AGBI sedang mengetik<span>.</span><span>.</span><span>.</span>
-            </p>
-        </div>`;
-    history.scrollTop = history.scrollHeight;
+            history.innerHTML += `
+                <div id="${typingIndicatorId}" class="flex items-start gap-2">
+                    <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                    <p class="bg-black/15 text-white p-3 rounded-2xl rounded-tl-none typing-dots">
+                        Si AGBI sedang mengetik<span>.</span><span>.</span><span>.</span>
+                    </p>
+                </div>`;
+            history.scrollTop = history.scrollHeight;
 
-    try {
-        // Mengirim request ke API lokal Anda
-        const response = await fetch('/api/chat.js', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: userText, muridName: muridName })
-        });
+            try {
+                // Mengirim request ke API lokal Anda
+                const response = await fetch('/api/chat.js', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userText, muridName: muridName })
+                });
 
-        const data = await response.json();
-        document.getElementById(typingIndicatorId)?.remove();
-        
-        const reply = data.reply || "Maaf, Si AGBI sedang istirahat sejenak.";
-        history.innerHTML += `
-            <div class="flex items-start gap-2">
-                <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
-                <p class="bg-black/15 text-white p-3 rounded-2xl rounded-tl-none max-w-[80%]">${reply}</p>
-            </div>`;
-    } catch (error) {
-        document.getElementById(typingIndicatorId)?.remove();
-        history.innerHTML += `<p class="text-red-300 text-xs">Error koneksi ke server.</p>`;
-    }
-    history.scrollTop = history.scrollHeight;
-}
+                const data = await response.json();
+                document.getElementById(typingIndicatorId)?.remove();
+                
+                const reply = data.reply || "Maaf, Si AGBI sedang istirahat sejenak.";
+                history.innerHTML += `
+                    <div class="flex items-start gap-2">
+                        <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
+                        <p class="bg-black/15 text-white p-3 rounded-2xl rounded-tl-none max-w-[80%]">${reply}</p>
+                    </div>`;
+            } catch (error) {
+                document.getElementById(typingIndicatorId)?.remove();
+                history.innerHTML += `<p class="text-red-300 text-xs">Error koneksi ke server.</p>`;
+            }
+            history.scrollTop = history.scrollHeight;
+        }
 
-        
         const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
         const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
         const INFO_SHEET_URL = "https://docs.google.com/spreadsheets/d/15kERx3m-kD4_ZhTlhdAz5K60tvcXtXn5xcE5xQfMXF0/export?format=csv";
