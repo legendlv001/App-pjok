@@ -8,15 +8,14 @@ export default async function handler(req, res) {
     
     const { message, muridName } = req.body;
     
-    // Inisialisasi API Key dari Environment Variable
+    // Pastikan API Key di Vercel Settings sudah benar dan tidak terpotong
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     
-    // MENGGUNAKAN "gemini-pro" KARENA INI ADALAH MODEL PALING STABIL 
-    // DAN PASTI DITERIMA OLEH SEMUA API KEY GOOGLE AI STUDIO
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // Menggunakan model "gemini-1.5-flash-8b"
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-8b" });
 
     try {
-        const prompt = `Kamu adalah Si AGBI, asisten guru PJOK SDN 1 Parigi. Murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif seputar materi PJOK. Pertanyaan murid: ${message}`;
+        const prompt = `Kamu adalah Si AGBI, asisten guru PJOK SDN 1 Parigi. Murid bernama ${muridName}. Berikan jawaban singkat, ramah, dan edukatif tentang PJOK. Pertanyaan: ${message}`;
         
         const result = await model.generateContent(prompt);
         const response = await result.response;
@@ -26,7 +25,7 @@ export default async function handler(req, res) {
     } catch (error) {
         console.error("Error Detail:", error.message);
         res.status(500).json({ 
-            reply: "Maaf, Si AGBI sedang istirahat. Silakan coba beberapa saat lagi." 
+            reply: "Maaf, Si AGBI sedang perlu istirahat sebentar. Coba lagi nanti ya!" 
         });
     }
 }
