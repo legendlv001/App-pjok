@@ -2,16 +2,15 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
-    // Memastikan hanya menerima metode POST[span_1](start_span)[span_1](end_span)
     if (req.method !== 'POST') {
         return res.status(405).json({ reply: "Method tidak diizinkan." });
     }
     
     const { message, muridName } = req.body;
     
-    // Inisialisasi API Key dari Environment Variable[span_2](start_span)[span_2](end_span)
+    // Inisialisasi menggunakan model flash yang stabil[span_1](start_span)[span_1](end_span)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     try {
         const prompt = `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif. Pertanyaan murid: ${message}`;
@@ -22,7 +21,7 @@ export default async function handler(req, res) {
         
         res.status(200).json({ reply });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ reply: "Maaf, terjadi gangguan pada server Si AGBI." });
+        console.error("Error AI:", error);
+        res.status(500).json({ reply: "Maaf, Si AGBI sedang istirahat. Coba lagi nanti ya!" });
     }
 }
