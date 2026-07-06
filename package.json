@@ -1,0 +1,13 @@
+{
+  "name": "app-pjok",
+  "version": "1.0.0",
+  "description": "Aplikasi PJOK SDN 1 Parigi",
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  }
+}
