@@ -136,10 +136,7 @@
                 <span id="avatar">🐸</span>
             </div>
             <div class="flex-1">
-                <div class="flex items-center gap-2">
-                    <span id="avatar-preview" class="text-xl">🐸</span>
-                    <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
-                </div>
+                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
                 <p class="text-[10px] text-gray-500 mt-1">Klik ikon hewan untuk ganti avatar</p>
             </div>
         </section>
@@ -185,9 +182,7 @@
 
         <section class="mb-6">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎮</span> Zona Permainan</h2>
-            <div id="gameContainer" class="grid grid-cols-2 gap-3">
-                <!-- Zona permainan sekarang dinamis berdasarkan data spreadsheet -->
-            </div>
+            <div id="gameContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
 
         <section class="mb-16">
@@ -233,10 +228,8 @@
 
         function changeAvatar() {
             const avatarEl = document.getElementById('avatar');
-            const previewEl = document.getElementById('avatar-preview');
             currentAvatarIndex = (currentAvatarIndex + 1) % avatars.length;
             avatarEl.textContent = avatars[currentAvatarIndex];
-            previewEl.textContent = avatars[currentAvatarIndex];
         }
 
         function openChat() { 
@@ -245,39 +238,25 @@
             document.getElementById('chat-input').focus();
         }
 
-        async function fetchWithRetry(url, options, retries = 5, delay = 1000) {
-            try {
-                const response = await fetch(url, options);
-                if (!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
-                return await response.json();
-            } catch (error) {
-                if (retries === 1) throw error;
-                await new Promise(resolve => setTimeout(resolve, delay));
-                return fetchWithRetry(url, options, retries - 1, delay * 2);
-            }
-        }
-
         async function sendToGemini() {
-    const input = document.getElementById('chat-input');
-    const muridName = document.getElementById('murid-name').value.trim() || "Murid";
-    const history = document.getElementById('chat-history');
-    const userText = input.value.trim();
-    // Mendapatkan ikon avatar saat ini
-    const currentAvatar = document.getElementById('avatar').textContent;
-    if (!userText) return;
-    
-    // Tampilkan pesan user ke layar dengan ikon avatar
-    history.innerHTML += `
-        <div class="flex items-start gap-2 justify-end">
-            <div class="bg-white text-[#7CA982] p-3 rounded-2xl rounded-tr-none font-bold shadow-sm max-w-[80%]">
-                <p class="text-[10px] opacity-70">${currentAvatar} ${muridName}</p>
-                <p>${userText}</p>
-            </div>
-        </div>`;
-    input.value = '';
-    history.scrollTop = history.scrollHeight;
+            const input = document.getElementById('chat-input');
+            const muridName = document.getElementById('murid-name').value.trim() || "Murid";
+            const history = document.getElementById('chat-history');
+            const userText = input.value.trim();
+            const currentAvatar = document.getElementById('avatar').textContent;
+            if (!userText) return;
+            
+            history.innerHTML += `
+                <div class="flex items-start gap-2 justify-end">
+                    <div class="bg-white text-[#7CA982] p-3 rounded-2xl rounded-tr-none font-bold shadow-sm max-w-[80%]">
+                        <p class="text-[10px] opacity-70">${currentAvatar} ${muridName}</p>
+                        <p>${userText}</p>
+                    </div>
+                </div>`;
+            input.value = '';
+            history.scrollTop = history.scrollHeight;
 
-    const typingIndicatorId = "typing-indicator-" + Date.now();
+            const typingIndicatorId = "typing-indicator-" + Date.now();
             history.innerHTML += `
                 <div id="${typingIndicatorId}" class="flex items-start gap-2">
                     <img src="https://i.ibb.co.com/vxKhpF50/6ae92db4-8e81-4a1a-9b35-a218c706dd42-2.png" class="w-8 h-8 rounded-full border-2 border-white object-cover">
@@ -288,13 +267,11 @@
             history.scrollTop = history.scrollHeight;
 
             try {
-                // Mengirim request ke API lokal Anda
                 const response = await fetch('/api/chat.js', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: userText, muridName: muridName })
                 });
-
                 const data = await response.json();
                 document.getElementById(typingIndicatorId)?.remove();
                 
@@ -314,8 +291,9 @@
         const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
         const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
         const INFO_SHEET_URL = "https://docs.google.com/spreadsheets/d/15kERx3m-kD4_ZhTlhdAz5K60tvcXtXn5xcE5xQfMXF0/export?format=csv";
+        
         let DYNAMIC_CLASS_LINKS = {};
-        let GAME_LINKS = {};
+        let gameData = [];
 
         async function syncData() {
             try {
@@ -323,7 +301,6 @@
                 const textInfo = await resInfo.text();
                 const infoContainer = document.getElementById('info-app-content');
                 const infoSection = document.getElementById('info-app-section');
-                
                 const lines = textInfo.split('\n').filter(l => l.trim() !== "");
                 if (lines.length > 0) {
                     infoContainer.innerHTML = `<h3 class="font-bold text-black font-vt text-lg mb-2">📌Apa saja yang baru di Aplikasi PJOK SDN 1 Parigi Ini...!</h3>` + 
@@ -345,18 +322,52 @@
                 
                 const resGame = await fetch(GAME_SHEET_URL);
                 const textGame = await resGame.text();
-                GAME_LINKS = {}; // Reset links
-                textGame.split('\n').slice(1).forEach(row => {
+                gameData = textGame.split('\n').slice(1).map(row => {
                     const cols = row.split(',');
-                    if (cols.length >= 2) {
-                        const key = cols[0].replace(/"/g, '').trim();
-                        const link = cols[1].replace(/"/g, '').trim();
-                        if (key && link) GAME_LINKS[key] = link;
-                    }
-                });
+                    if (cols.length >= 2) return { name: cols[0].replace(/"/g, '').trim(), link: cols[1].replace(/"/g, '').trim() };
+                    return null;
+                }).filter(Boolean);
                 renderUI();
             } catch (e) { console.error("Sync gagal", e); renderUI(); }
         }
+
+        function getIconForGame(name) {
+            if (!name) return null;
+            const lowerName = name.toLowerCase();
+            
+            if (lowerName.includes('rendah')) return '🧩';
+            if (lowerName.includes('tinggi')) return '🕹️';
+            if (lowerName.includes('multi')) return '🤖';
+            
+            if (lowerName.includes('bola') || lowerName.includes('sepak') || lowerName.includes('futsal')) return '⚽';
+            if (lowerName.includes('basket')) return '🏀';
+            if (lowerName.includes('voli') || lowerName.includes('volly')) return '🏐';
+            if (lowerName.includes('kasti') || lowerName.includes('lempar') || lowerName.includes('softball')) return '🥎';
+            if (lowerName.includes('rugby') || lowerName.includes('amerika')) return '🏈';
+            if (lowerName.includes('bulutangkis') || lowerName.includes('badminton') || lowerName.includes('raket')) return '🏸';
+            if (lowerName.includes('tenis') || lowerName.includes('pingpong')) return '🎾';
+            if (lowerName.includes('renang') || lowerName.includes('air') || lowerName.includes('selam')) return '🤿';
+            if (lowerName.includes('pancing') || lowerName.includes('ikan')) return '🎣';
+            if (lowerName.includes('seluncur') || lowerName.includes('es')) return '⛸️';
+            if (lowerName.includes('salju') || lowerName.includes('kereta')) return '🛷';
+            if (lowerName.includes('curling')) return '🥌';
+            if (lowerName.includes('catur') || lowerName.includes('board')) return '♟️';
+            if (lowerName.includes('panah') || lowerName.includes('archery')) return '🏹';
+            if (lowerName.includes('tinju') || lowerName.includes('pukul')) return '🥊';
+            if (lowerName.includes('layang')) return '🪁';
+            if (lowerName.includes('roda')) return '🛼';
+            if (lowerName.includes('skate') || lowerName.includes('papan')) return '🛹';
+            if (lowerName.includes('biliar') || lowerName.includes('billiard')) return '🎱';
+            if (lowerName.includes('boling') || lowerName.includes('bowling')) return '🎳';
+            if (lowerName.includes('tembak') || lowerName.includes('pistol')) return '🔫';
+            if (lowerName.includes('yoyo')) return '🪀';
+            if (lowerName.includes('bumerang') || lowerName.includes('boomerang')) return '🪃';
+
+            return null;
+        }
+
+        const fallbackIconsPool = ['🎮', '🎯', '🎲', '🎪', '🚀', '🛸', '🏎️', '🏆', '🎭', '🎨'];
+        let poolIndex = 0;
 
         function renderUI() {
             document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
@@ -371,28 +382,28 @@
                 </div>
             `).join('');
 
-            const gameContainer = document.getElementById('gameContainer');
-            if (gameContainer) {
-                const getGameIcon = (key) => {
-                    const k = key.toLowerCase();
-                    if (k.includes('rendah')) return '🧩';
-                    if (k.includes('tinggi')) return '🕹️';
-                    if (k.includes('multi')) return '🤖';
-                    const fallbackIcons = ['🎲', '🎯', '🏅', '🏸', '⚽', '🏀', '🎾'];
-                    return fallbackIcons[Math.floor(Math.random() * fallbackIcons.length)];
-                };
-                gameContainer.innerHTML = Object.keys(GAME_LINKS).map((key, index) => {
-                    const colors = ['bg-indigo-500', 'bg-pink-500', 'bg-teal-500', 'bg-amber-500'];
-                    const color = colors[index % colors.length];
-                    return `
-                        <button onclick="handleGameClick('${key}')" class="p-4 rounded-3xl ${color} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
-                            <span class="text-2xl">${getGameIcon(key)}</span>
-                            <span class="font-bold text-[13px] uppercase">${key}</span>
-                            <span class="text-[11px] font-bold opacity-80 bg-white/25 px-2 py-0.5 rounded-full">✅ Aktif</span>
-                        </button>
-                    `;
-                }).join('');
-            }
+            document.getElementById('gameContainer').innerHTML = gameData.map((game, idx) => {
+                const isActive = game.link && game.link.length > 5;
+                
+                let icon = getIconForGame(game.name);
+                if (!icon) {
+                    icon = fallbackIconsPool[poolIndex % fallbackIconsPool.length];
+                    poolIndex++;
+                }
+                
+                const colors = ['bg-indigo-500', 'bg-pink-500', 'bg-teal-500', 'bg-amber-500', 'bg-rose-500', 'bg-emerald-500', 'bg-cyan-500'];
+                const bgCol = isActive ? colors[idx % colors.length] : 'bg-gray-400';
+                
+                return `
+                    <button onclick="handleGameClick('${game.link}')" class="p-4 rounded-3xl ${bgCol} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                        <span class="text-2xl">${icon}</span>
+                        <span class="font-bold text-[13px] uppercase">${game.name}</span>
+                        <span class="text-[11px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/10'} px-2 py-0.5 rounded-full">
+                            ${isActive ? '✅ Aktif' : '❌ Belum Tersedia'}
+                        </span>
+                    </button>
+                `;
+            }).join('');
         }
 
         const KELOMPOK_DATA = [
@@ -405,7 +416,7 @@
         ];
 
         function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Kelas ini Belum dibuka.", "error"); }
-        function handleGameClick(key) { if (GAME_LINKS[key]) window.open(GAME_LINKS[key], '_blank'); else showToast("Game belum tersedia.", "error"); }
+        function handleGameClick(link) { if (link && link.length > 5) window.open(link, '_blank'); else showToast("Game belum tersedia.", "error"); }
         
         function showToast(message, type) {
             const container = document.getElementById('toast-container');
