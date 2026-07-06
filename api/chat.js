@@ -1,4 +1,3 @@
-// api/chat.js
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export default async function handler(req, res) {
@@ -8,9 +7,11 @@ export default async function handler(req, res) {
     
     const { message, muridName } = req.body;
     
-    // Inisialisasi menggunakan model flash yang stabil[span_1](start_span)[span_1](end_span)
+    // Inisialisasi API Key dari Environment Variable
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+    
+    // Menggunakan nama model standar yang didukung API
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     try {
         const prompt = `Kamu adalah asisten guru PJOK SDN 1 Parigi bernama Si AGBI. Murid bernama ${muridName}. Berikan jawaban singkat, ramah, menyenangkan, dan edukatif. Pertanyaan murid: ${message}`;
@@ -22,6 +23,6 @@ export default async function handler(req, res) {
         res.status(200).json({ reply });
     } catch (error) {
         console.error("Error AI:", error);
-        res.status(500).json({ reply: "Maaf, Si AGBI sedang istirahat. Coba lagi nanti ya!" });
+        res.status(500).json({ reply: "Maaf, Si AGBI sedang istirahat sejenak." });
     }
 }
