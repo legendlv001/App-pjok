@@ -204,12 +204,8 @@
         </section>
 
         <section class="mb-16">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>📆</span> Kaldik (Kalender Pendidikan)</h2>
-            <div class="grid grid-cols-1 gap-3">
-                <a href="https://docs.google.com/spreadsheets/d/1HtnXC5VovovJlXbFaJeYg6ZYItclOOwj/edit?usp=drivesdk&ouid=103922209702944393766&rtpof=true&sd=true" target="_blank" class="p-4 bg-amber-500 text-white rounded-2xl font-bold text-sm flex items-center justify-center gap-3 hover:opacity-90 shadow-md text-center transition-transform hover:scale-[1.02]">
-                    <span class="text-xl">📅</span> Buka Kalender Pendidikan
-                </a>
-            </div>
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🏫</span> Aplikasi Sekolah</h2>
+            <div id="appSekolahContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
     </div>
 
@@ -300,9 +296,11 @@
         const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
         const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
         const INFO_SHEET_URL = "https://docs.google.com/spreadsheets/d/15kERx3m-kD4_ZhTlhdAz5K60tvcXtXn5xcE5xQfMXF0/export?format=csv";
+        const APP_SEKOLAH_SHEET_URL = "https://docs.google.com/spreadsheets/d/1kvq0o2Ockv8r6bUYyesxtD3MzZGWZaAvHZfBxpBeeN4/export?format=csv";
         
         let DYNAMIC_CLASS_LINKS = {};
         let gameData = [];
+        let appSekolahData = [];
 
         async function syncData() {
             try {
@@ -336,6 +334,15 @@
                     if (cols.length >= 2) return { name: cols[0].replace(/"/g, '').trim(), link: cols[1].replace(/"/g, '').trim() };
                     return null;
                 }).filter(Boolean);
+
+                const resApp = await fetch(APP_SEKOLAH_SHEET_URL);
+                const textApp = await resApp.text();
+                appSekolahData = textApp.split('\n').slice(1).map(row => {
+                    const cols = row.split(',');
+                    if (cols.length >= 2) return { name: cols[0].replace(/"/g, '').trim(), link: cols[1].replace(/"/g, '').trim() };
+                    return null;
+                }).filter(Boolean);
+
                 renderUI();
             } catch (e) { console.error("Sync gagal", e); renderUI(); }
         }
@@ -375,8 +382,66 @@
             return null;
         }
 
+        function getIconForApp(name) {
+            if (!name) return null;
+
+            // Jika judul dari spreadsheet sudah ditulis beserta emoji di depannya
+            const emojiMatch = name.match(/(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
+            if (emojiMatch) return emojiMatch[0];
+
+            const lowerName = name.toLowerCase();
+            
+            // Kaldik & Jadwal khusus
+            if (lowerName.includes('kaldik')) return '📆';
+            if (lowerName.includes('jadwal')) return '🗓️';
+
+            // Rapor & Nilai & Leger
+            if (lowerName.includes('rapor') || lowerName.includes('nilai') || lowerName.includes('leger') || lowerName.includes('kkm')) return '📊';
+            // Presensi & Kehadiran
+            if (lowerName.includes('absen') || lowerName.includes('presensi') || lowerName.includes('hadir')) return '📋';
+            // Perpustakaan & Baca
+            if (lowerName.includes('buku') || lowerName.includes('perpus') || lowerName.includes('literasi') || lowerName.includes('baca')) return '📚';
+            // Kalender & Agenda
+            if (lowerName.includes('kalender') || lowerName.includes('agenda')) return '📅';
+            // CBT, Ujian, Soal, Asesmen, Quiz
+            if (lowerName.includes('tugas') || lowerName.includes('ujian') || lowerName.includes('cbt') || lowerName.includes('soal') || lowerName.includes('tes') || lowerName.includes('quiz') || lowerName.includes('kuis') || lowerName.includes('asesmen')) return '📝';
+            // Guru & Tenaga Pendidik / SKP
+            if (lowerName.includes('guru') || lowerName.includes('pengajar') || lowerName.includes('ptk') || lowerName.includes('skp') || lowerName.includes('kinerja')) return '👨‍🏫';
+            // Siswa, Murid, PPDB
+            if (lowerName.includes('siswa') || lowerName.includes('murid') || lowerName.includes('ppdb') || lowerName.includes('spmb') || lowerName.includes('pendaftaran')) return '🎒';
+            // Keuangan, SPP, Kas, BOS
+            if (lowerName.includes('keuangan') || lowerName.includes('kas') || lowerName.includes('bayar') || lowerName.includes('spp') || lowerName.includes('bos') || lowerName.includes('tabungan')) return '💰';
+            // Surat, Arsip, TU, Administrasi
+            if (lowerName.includes('surat') || lowerName.includes('arsip') || lowerName.includes('dokumen') || lowerName.includes('tu') || lowerName.includes('admin')) return '📑';
+            // Dapodik, Simpatika, Verval, Sistem Data
+            if (lowerName.includes('dapodik') || lowerName.includes('simpatika') || lowerName.includes('verval') || lowerName.includes('data') || lowerName.includes('sistem') || lowerName.includes('aplikasi')) return '💻';
+            // PMM, Kurikulum Merdeka
+            if (lowerName.includes('pmm') || lowerName.includes('merdeka') || lowerName.includes('kurikulum')) return '🏛️';
+            // Web, Portal, Media Sosial
+            if (lowerName.includes('web') || lowerName.includes('situs') || lowerName.includes('portal') || lowerName.includes('link') || lowerName.includes('yt') || lowerName.includes('youtube') || lowerName.includes('ig') || lowerName.includes('instagram')) return '🌐';
+            // Sertifikat & Piagam
+            if (lowerName.includes('sertifikat') || lowerName.includes('piagam') || lowerName.includes('ijazah')) return '📜';
+            // BK & Bimbingan Konseling
+            if (lowerName.includes('bk') || lowerName.includes('konseling') || lowerName.includes('aduan')) return '🗣️';
+            // Kantin
+            if (lowerName.includes('kantin') || lowerName.includes('makan') || lowerName.includes('gizi')) return '🍱';
+            // Ekstrakurikuler & Pramuka
+            if (lowerName.includes('pramuka') || lowerName.includes('ekskul') || lowerName.includes('ekstra')) return '🏕️';
+            // Peta & Lokasi
+            if (lowerName.includes('peta') || lowerName.includes('lokasi') || lowerName.includes('denah')) return '🗺️';
+            // AI & Bot
+            if (lowerName.includes('ai') || lowerName.includes('agbi') || lowerName.includes('bot') || lowerName.includes('chatgpt')) return '🤖';
+            // Galeri, Foto, Video
+            if (lowerName.includes('foto') || lowerName.includes('galeri') || lowerName.includes('video') || lowerName.includes('gambar')) return '🖼️';
+
+            return null;
+        }
+
         const fallbackIconsPool = ['🎮', '🎯', '🎲', '🎪', '🚀', '🛸', '🏎️', '🏆', '🎭', '🎨'];
         let poolIndex = 0;
+
+        const fallbackAppIconsPool = ['🏫', '💻', '📱', '📌', '✨', '⭐', '📁', '🗂️', '🎯', '🚀'];
+        let appPoolIndex = 0;
 
         function renderUI() {
             document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
@@ -413,6 +478,29 @@
                     </button>
                 `;
             }).join('');
+
+            document.getElementById('appSekolahContainer').innerHTML = appSekolahData.map((app, idx) => {
+                const isActive = app.link && app.link.length > 5;
+                
+                let icon = getIconForApp(app.name);
+                if (!icon) {
+                    icon = fallbackAppIconsPool[appPoolIndex % fallbackAppIconsPool.length];
+                    appPoolIndex++;
+                }
+                
+                const colors = ['bg-amber-500', 'bg-emerald-500', 'bg-sky-500', 'bg-indigo-500', 'bg-fuchsia-500', 'bg-rose-500', 'bg-teal-500'];
+                const bgCol = isActive ? colors[idx % colors.length] : 'bg-gray-400';
+                
+                return `
+                    <button onclick="handleAppClick('${app.link}')" class="p-4 rounded-3xl ${bgCol} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                        <span class="text-2xl">${icon}</span>
+                        <span class="font-bold text-[13px] uppercase">${app.name}</span>
+                        <span class="text-[11px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/10'} px-2 py-0.5 rounded-full">
+                            ${isActive ? '✅ Aktif' : '❌ Belum Tersedia'}
+                        </span>
+                    </button>
+                `;
+            }).join('');
         }
 
         const KELOMPOK_DATA = [
@@ -426,6 +514,7 @@
 
         function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Kelas ini Belum dibuka.", "error"); }
         function handleGameClick(link) { if (link && link.length > 5) window.open(link, '_blank'); else showToast("Game belum tersedia.", "error"); }
+        function handleAppClick(link) { if (link && link.length > 5) window.open(link, '_blank'); else showToast("Aplikasi belum tersedia.", "error"); }
         
         function showToast(message, type) {
             const container = document.getElementById('toast-container');
