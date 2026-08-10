@@ -103,31 +103,54 @@
                     </p>
                 </div>
             </div>
-            <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/50 text-charcoal hover:scale-105 active:scale-95 transition-all shadow-sm">
-                <span class="block dark:hidden text-lg leading-none">☀️</span>
-                <span class="hidden dark:block text-lg leading-none">🌙</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- ICON INFORMASI DENGAN BADGE ANGKA DI SAMPING TOMBOL DARK/LIGHT MODE -->
+                <section id="info-app-section" class="hidden relative">
+                    <button id="info-collapsed-btn" onclick="toggleInfoBox()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/50 text-charcoal hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer text-lg relative" title="Klik untuk lihat Info Terbaru">
+                        📢
+                        <span id="info-badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md border-2 border-white">0</span>
+                    </button>
+                </section>
+                <button id="theme-toggle" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/50 text-charcoal hover:scale-105 active:scale-95 transition-all shadow-sm">
+                    <span class="block dark:hidden text-lg leading-none">☀️</span>
+                    <span class="hidden dark:block text-lg leading-none">🌙</span>
+                </button>
+            </div>
         </div>
     </header>
 
     <div class="w-full max-w-xl lg:max-w-2xl mx-auto p-4 pt-0">
-        <section id="info-app-section" class="relative mb-4 kolom-teks shadow-sm border border-gray-100 dark:border-gray-700 animate-fade-in hidden py-2 px-4">
-            <div class="flex items-center gap-3 w-full">
-                <span class="text-xl flex-shrink-0 scale-x-[-1]">📢</span>
-                <div class="w-0.5 bg-charcoal/30 self-stretch min-h-[1.5rem]"></div>
-                <div id="info-app-content" class="text-base font-vt text-charcoal w-full"></div>
+        <!-- MODAL / KONTROL INFORMASI TERBUKA PENUH -->
+        <div id="info-expanded-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div class="kolom-teks shadow-2xl border-2 border-light-gold rounded-3xl p-5 w-full max-w-md relative animate-fade-in text-charcoal">
+                <div class="flex justify-between items-center mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl scale-x-[-1]">📢</span>
+                        <h3 class="font-bold text-black font-vt text-xl">Info Terbaru</h3>
+                    </div>
+                    <button onclick="toggleInfoBox()" class="w-8 h-8 rounded-full bg-black/10 hover:bg-black/20 text-charcoal flex items-center justify-center text-sm font-bold transition-all">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="w-full bg-charcoal/20 h-px mb-3"></div>
+                <div id="info-app-content" class="text-base font-vt text-charcoal w-full space-y-1.5 max-h-[60vh] overflow-y-auto pr-1 scrollbar-thin"></div>
             </div>
-        </section>
+        </div>
 
-        <section id="motivasi-section" class="relative overflow-hidden bg-gradient-to-r from-rich-sea-blue to-blue-500 p-3 rounded-2xl shadow-lg mb-6 text-white border-2 border-white/20 flex items-center gap-4">
-            <div class="flex-shrink-0 bg-white/20 p-2 rounded-2xl border border-white/10 flex items-center justify-center shadow-inner">
-                <svg class="w-6 h-6 text-amber-400 animate-pulse" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.557 11.393c-.612-1.383-1.637-2.522-2.31-3.793-.728-1.373-.836-2.906-.31-4.4a.2.2 0 0 0-.293-.217c-1.326.853-2.53 1.954-3.323 3.32-.823 1.417-1.042 3.125-.658 4.743.085.357-.271.657-.594.475a4.72 4.72 0 0 1-1.927-2.483.2.2 0 0 0-.374-.037 8.163 8.163 0 0 0-.616 3.1c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.914-.672-3.666-1.785-5.043-.133-.165-.39-.1-.422.11a5.454 5.454 0 0 1-1.88 4.28z"/>
-                </svg>
-            </div>
-            <div class="flex-1 text-left relative z-10">
-                <h3 class="text-[10px] uppercase tracking-widest opacity-95 mb-0.5 font-bold">Motivasi Hari Ini</h3>
-                <p id="quote-text" class="font-bold text-sm italic leading-tight">"Memuat motivasi..."</p>
+        <section id="motivasi-section" class="relative overflow-hidden bg-gradient-to-r from-rich-sea-blue to-blue-500 py-3 px-4 rounded-2xl shadow-lg mb-4 text-white border-2 border-white/20">
+            <div class="flex items-center gap-3 w-full">
+                <div class="flex-shrink-0 flex items-center justify-center">
+                    <svg class="w-7 h-7 text-amber-400 animate-bounce drop-shadow-[0_0_8px_rgba(251,191,36,0.9)]" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.557 11.393c-.612-1.383-1.637-2.522-2.31-3.793-.728-1.373-.836-2.906-.31-4.4a.2.2 0 0 0-.293-.217c-1.326.853-2.53 1.954-3.323 3.32-.823 1.417-1.042 3.125-.658 4.743.085.357-.271.657-.594.475a4.72 4.72 0 0 1-1.927-2.483.2.2 0 0 0-.374-.037 8.163 8.163 0 0 0-.616 3.1c0 4.418 3.582 8 8 8s8-3.582 8-8c0-1.914-.672-3.666-1.785-5.043-.133-.165-.39-.1-.422.11a5.454 5.454 0 0 1-1.88 4.28z"/>
+                    </svg>
+                </div>
+                <div class="w-0.5 bg-white/40 self-stretch min-h-[1.5rem]"></div>
+                <div class="flex-1 text-left relative z-10">
+                    <h3 class="text-[10px] uppercase tracking-widest opacity-95 mb-0.5 font-bold">
+                        Motivasi Hari Ini
+                    </h3>
+                    <p id="quote-text" class="font-bold text-sm italic leading-tight">"Memuat motivasi..."</p>
+                </div>
             </div>
         </section>
 
@@ -136,7 +159,7 @@
                 <span id="avatar">🐸</span>
             </div>
             <div class="flex-1">
-                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1">
+                <input id="murid-name" type="text" placeholder="Masukkan Nama Murid" class="w-full bg-transparent font-bold text-lg outline-none border-b border-gray-200 dark:border-gray-655 focus:border-rich-sea-blue dark:text-white transition-colors py-1" oninput="updateGuestName(this.value)">
                 <p class="text-[10px] text-gray-500 mt-1">Klik ikon hewan untuk ganti avatar</p>
             </div>
         </section>
@@ -221,10 +244,66 @@
 
     <div id="toast-container" class="fixed bottom-12 left-4 right-4 z-50 flex flex-col gap-2 max-w-sm mx-auto"></div>
 
+    <!-- MODAL BUKU TAMU PERTAMA KALI MASUK -->
+    <div id="guestbook-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-darkmode-card w-full max-w-md p-6 rounded-3xl shadow-2xl border-2 border-light-gold text-center animate-fade-in">
+            <div class="w-16 h-16 bg-rich-sea-blue/10 dark:bg-rich-sea-blue/30 text-rich-sea-blue dark:text-blue-300 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+                📝
+            </div>
+            <h2 class="text-xl font-bold mb-1 text-charcoal dark:text-white font-ravie">BUKU TAMU</h2>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mb-5">Silakan masukkan nama lengkapmu untuk masuk ke WEB PJOK SDN 1 PARIGI...!</p>
+            
+            <input id="guest-input-name" type="text" placeholder="Tulis nama kamu di sini..." class="w-full p-3.5 rounded-2xl bg-gray-100 dark:bg-gray-700 text-charcoal dark:text-white font-bold text-base outline-none border-2 border-transparent focus:border-rich-sea-blue mb-5 text-center transition-all shadow-inner" onkeydown="if(event.key === 'Enter') submitGuestbook()">
+            
+            <button onclick="submitGuestbook()" class="w-full py-3.5 bg-gradient-to-r from-rich-sea-blue to-blue-600 text-white font-bold rounded-2xl shadow-lg hover:opacity-95 active:scale-[0.98] transition-all text-sm">
+                Masuk ke Aplikasi 🚀
+            </button>
+        </div>
+    </div>
+
     <script>
         const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮', '🦋', '🕷️', '🦈', '🐥', '🦓', '🦝', '🐻‍❄️', '🐺', '🐵', '🧕', '🧑🏻‍💼'];
         let currentAvatarIndex = 0;
+        let isInfoOpen = false;
+
+        function toggleInfoBox() {
+            isInfoOpen = !isInfoOpen;
+            const expandedModal = document.getElementById('info-expanded-modal');
+
+            if (isInfoOpen) {
+                expandedModal.classList.remove('hidden');
+            } else {
+                expandedModal.classList.add('hidden');
+            }
+        }
         
+        // Cek dan tampilkan modal buku tamu saat pertama kali masuk
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('pjok_guest_name');
+            if (savedName) {
+                document.getElementById('murid-name').value = savedName;
+                document.getElementById('guestbook-modal').classList.add('hidden');
+            } else {
+                document.getElementById('guest-input-name').focus();
+            }
+        });
+
+        function submitGuestbook() {
+            const inputName = document.getElementById('guest-input-name').value.trim();
+            if (!inputName) {
+                showToast("Nama tidak boleh kosong!", "error");
+                return;
+            }
+            localStorage.setItem('pjok_guest_name', inputName);
+            document.getElementById('murid-name').value = inputName;
+            document.getElementById('guestbook-modal').classList.add('hidden');
+            showToast(`Halo, ${inputName}! Selamat belajar PJOK. 🎉`, "success");
+        }
+
+        function updateGuestName(val) {
+            localStorage.setItem('pjok_guest_name', val);
+        }
+
         const dailyQuotes = {
             0: "Minggu Bugar! Istirahat aktif dengan berjalan santai bersama keluarga agar tubuh tetap prima menyambut esok hari. 🚶‍♂️👨‍👩‍👧‍👦",
             1: "Senin Semangat! Mulai pekanmu dengan peregangan pagi agar pikiran fokus dan tubuh siap menyerap ilmu baru. 🏃‍♂️✨",
@@ -366,12 +445,18 @@
                 const textInfo = await fetchCSVWithFallback(INFO_SHEET_URL);
                 const infoContainer = document.getElementById('info-app-content');
                 const infoSection = document.getElementById('info-app-section');
+                const infoBadge = document.getElementById('info-badge');
                 if (textInfo) {
                     const lines = textInfo.split('\n').filter(l => l.trim() !== "");
                     if (lines.length > 0) {
-                        infoContainer.innerHTML = `<h3 class="font-bold text-black font-vt text-lg mb-2">📌Apa saja yang baru di Aplikasi PJOK SDN 1 Parigi Ini...!</h3>` + 
-                            lines.slice(1).map(line => `<p class="mb-1 text-charcoal font-vt text-base">${line.replace(/"/g, '')}</p>`).join('');
-                        infoSection.classList.remove('hidden');
+                        const infoList = lines.slice(1);
+                        infoContainer.innerHTML = infoList.map(line => `<p class="mb-1.5 text-charcoal font-vt text-base">${line.replace(/"/g, '')}</p>`).join('');
+                        
+                        // Menampilkan jumlah info terbaru pada badge angka di icon
+                        if (infoList.length > 0) {
+                            infoBadge.textContent = infoList.length;
+                            infoSection.classList.remove('hidden');
+                        }
                     }
                 }
 
