@@ -181,11 +181,20 @@
         </section>
 
         <section class="mb-6">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎮</span> Zona Permainan</h2>
-            <div id="gameContainer" class="grid grid-cols-2 gap-3"></div>
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🏫</span> Aplikasi Sekolah</h2>
+            <div id="appSekolahContainer" class="grid grid-cols-2 gap-3">
+                <div class="col-span-2 text-center py-4 text-sm text-gray-500 dark:text-gray-400">Sedang memuat aplikasi sekolah...</div>
+            </div>
         </section>
 
         <section class="mb-6">
+            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🎮</span> Zona Hiburan</h2>
+            <div id="zonaHiburanContainer" class="grid grid-cols-2 gap-3">
+                <div class="col-span-2 text-center py-4 text-sm text-gray-500 dark:text-gray-400">Sedang memuat zona hiburan...</div>
+            </div>
+        </section>
+
+        <section class="mb-16">
             <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>📱</span> Akun Sosial Media 📢</h2>
             <div class="grid grid-cols-2 gap-3">
                 <a href="https://chat.whatsapp.com/LFK7rfB2ynVIX3IFYhdgV9" target="_blank" class="p-3 bg-[#25D366] text-white rounded-2xl font-bold text-xs sm:text-sm flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-2 sm:gap-3 hover:opacity-90 shadow-md text-center sm:text-left h-full transition-transform hover:scale-[1.02]">
@@ -201,11 +210,6 @@
                     <span class="text-lg">▶️</span> YouTube Guru PJOK
                 </a>
             </div>
-        </section>
-
-        <section class="mb-16">
-            <h2 class="text-lg font-semibold mb-3 text-black dark:text-blue-300 flex items-center gap-2"><span>🏫</span> Aplikasi Sekolah</h2>
-            <div id="appSekolahContainer" class="grid grid-cols-2 gap-3"></div>
         </section>
     </div>
 
@@ -293,155 +297,152 @@
             history.scrollTop = history.scrollHeight;
         }
 
-        const CLASS_SHEET_URL = "https://docs.google.com/spreadsheets/d/1_iNik9rXl2jMDw_Os3NuJ6STbZ3OJlqlKuknMtWr2u0/export?format=csv";
-        const GAME_SHEET_URL = "https://docs.google.com/spreadsheets/d/1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0/export?format=csv";
-        const INFO_SHEET_URL = "https://docs.google.com/spreadsheets/d/15kERx3m-kD4_ZhTlhdAz5K60tvcXtXn5xcE5xQfMXF0/export?format=csv";
-        const APP_SEKOLAH_SHEET_URL = "https://docs.google.com/spreadsheets/d/1kvq0o2Ockv8r6bUYyesxtD3MzZGWZaAvHZfBxpBeeN4/export?format=csv";
+        const SPREADSHEET_ID = "1SyeH8LQLKT5WfakfWNJhlE0r8Z6paV2q6ZPWL2g-YW0";
+        
+        const CLASS_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Kelas`;
+        const INFO_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Info`;
+        const APP_SEKOLAH_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=data%20app`;
+        const GAME_SHEET_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=Hiburan`;
         
         let DYNAMIC_CLASS_LINKS = {};
-        let gameData = [];
         let appSekolahData = [];
+        let gameData = [];
+
+        async function fetchCSVWithFallback(url) {
+            try {
+                const res = await fetch(url);
+                if (res.ok) {
+                    const text = await res.text();
+                    if (text && !text.includes('<!DOCTYPE html>') && text.trim().length > 0) return text;
+                }
+            } catch (e) {}
+
+            try {
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+                const res = await fetch(proxyUrl);
+                if (res.ok) {
+                    const text = await res.text();
+                    if (text && !text.includes('<!DOCTYPE html>') && text.trim().length > 0) return text;
+                }
+            } catch (e) {}
+
+            return "";
+        }
+
+        function parseCSV(text) {
+            if (!text) return [];
+            const lines = text.split('\n').filter(l => l.trim() !== "");
+            const result = [];
+            // Mulai dari baris ke-1 untuk melewati header
+            for (let i = 1; i < lines.length; i++) {
+                const row = lines[i];
+                let cols = [];
+                let current = '';
+                let inQuotes = false;
+                for (let j = 0; j < row.length; j++) {
+                    const char = row[j];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        cols.push(current.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                cols.push(current.trim().replace(/^"|"$/g, '').replace(/""/g, '"'));
+                
+                if (cols.length >= 1 && cols[0]) {
+                    const name = cols[0];
+                    const link = cols[1] || '';
+                    result.push({ name: name, link: link });
+                }
+            }
+            return result;
+        }
 
         async function syncData() {
             try {
-                const resInfo = await fetch(INFO_SHEET_URL);
-                const textInfo = await resInfo.text();
+                const textInfo = await fetchCSVWithFallback(INFO_SHEET_URL);
                 const infoContainer = document.getElementById('info-app-content');
                 const infoSection = document.getElementById('info-app-section');
-                const lines = textInfo.split('\n').filter(l => l.trim() !== "");
-                if (lines.length > 0) {
-                    infoContainer.innerHTML = `<h3 class="font-bold text-black font-vt text-lg mb-2">📌Apa saja yang baru di Aplikasi PJOK SDN 1 Parigi Ini...!</h3>` + 
-                        lines.slice(1).map(line => `<p class="mb-1 text-charcoal font-vt text-base">${line.replace(/"/g, '')}</p>`).join('');
-                    infoSection.classList.remove('hidden');
+                if (textInfo) {
+                    const lines = textInfo.split('\n').filter(l => l.trim() !== "");
+                    if (lines.length > 0) {
+                        infoContainer.innerHTML = `<h3 class="font-bold text-black font-vt text-lg mb-2">📌Apa saja yang baru di Aplikasi PJOK SDN 1 Parigi Ini...!</h3>` + 
+                            lines.slice(1).map(line => `<p class="mb-1 text-charcoal font-vt text-base">${line.replace(/"/g, '')}</p>`).join('');
+                        infoSection.classList.remove('hidden');
+                    }
                 }
 
-                const resClass = await fetch(CLASS_SHEET_URL);
-                const textClass = await resClass.text();
-                textClass.split('\n').slice(1).forEach(row => {
-                    const cols = row.split(',');
-                    if (cols.length >= 2) {
-                        const cls = cols[0].replace(/"/g, '').trim();
-                        const link = cols[1].replace(/"/g, '').trim();
-                        const match = cls.match(/\d+/);
-                        if (match) DYNAMIC_CLASS_LINKS[match[0]] = link;
-                    }
-                });
+                const textClass = await fetchCSVWithFallback(CLASS_SHEET_URL);
+                if (textClass) {
+                    textClass.split('\n').slice(1).forEach(row => {
+                        const cols = row.split(',');
+                        if (cols.length >= 2) {
+                            const cls = cols[0].replace(/"/g, '').trim();
+                            const link = cols[1].replace(/"/g, '').trim();
+                            const match = cls.match(/\d+/);
+                            if (match) DYNAMIC_CLASS_LINKS[match[0]] = link;
+                        }
+                    });
+                }
                 
-                const resGame = await fetch(GAME_SHEET_URL);
-                const textGame = await resGame.text();
-                gameData = textGame.split('\n').slice(1).map(row => {
-                    const cols = row.split(',');
-                    if (cols.length >= 2) return { name: cols[0].replace(/"/g, '').trim(), link: cols[1].replace(/"/g, '').trim() };
-                    return null;
-                }).filter(Boolean);
+                const textApp = await fetchCSVWithFallback(APP_SEKOLAH_SHEET_URL);
+                appSekolahData = parseCSV(textApp);
 
-                const resApp = await fetch(APP_SEKOLAH_SHEET_URL);
-                const textApp = await resApp.text();
-                appSekolahData = textApp.split('\n').slice(1).map(row => {
-                    const cols = row.split(',');
-                    if (cols.length >= 2) return { name: cols[0].replace(/"/g, '').trim(), link: cols[1].replace(/"/g, '').trim() };
-                    return null;
-                }).filter(Boolean);
+                // Mengambil data dari sheet Hiburan
+                let textGame = await fetchCSVWithFallback(GAME_SHEET_URL);
+                if (!textGame) {
+                    textGame = await fetchCSVWithFallback(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=hiburan`);
+                }
+                gameData = parseCSV(textGame);
 
                 renderUI();
-            } catch (e) { console.error("Sync gagal", e); renderUI(); }
-        }
-
-        function getIconForGame(name) {
-            if (!name) return null;
-            const lowerName = name.toLowerCase();
-            
-            if (lowerName.includes('rendah')) return '🧩';
-            if (lowerName.includes('tinggi')) return '🕹️';
-            if (lowerName.includes('multi')) return '🤖';
-            
-            if (lowerName.includes('bola') || lowerName.includes('sepak') || lowerName.includes('futsal')) return '⚽';
-            if (lowerName.includes('basket')) return '🏀';
-            if (lowerName.includes('voli') || lowerName.includes('volly')) return '🏐';
-            if (lowerName.includes('kasti') || lowerName.includes('lempar') || lowerName.includes('softball')) return '🥎';
-            if (lowerName.includes('rugby') || lowerName.includes('amerika')) return '🏈';
-            if (lowerName.includes('bulutangkis') || lowerName.includes('badminton') || lowerName.includes('raket')) return '🏸';
-            if (lowerName.includes('tenis') || lowerName.includes('pingpong')) return '🎾';
-            if (lowerName.includes('renang') || lowerName.includes('air') || lowerName.includes('selam')) return '🤿';
-            if (lowerName.includes('pancing') || lowerName.includes('ikan')) return '🎣';
-            if (lowerName.includes('seluncur') || lowerName.includes('es')) return '⛸️';
-            if (lowerName.includes('salju') || lowerName.includes('kereta')) return '🛷';
-            if (lowerName.includes('curling')) return '🥌';
-            if (lowerName.includes('catur') || lowerName.includes('board')) return '♟️';
-            if (lowerName.includes('panah') || lowerName.includes('archery')) return '🏹';
-            if (lowerName.includes('tinju') || lowerName.includes('pukul')) return '🥊';
-            if (lowerName.includes('layang')) return '🪁';
-            if (lowerName.includes('roda')) return '🛼';
-            if (lowerName.includes('skate') || lowerName.includes('papan')) return '🛹';
-            if (lowerName.includes('biliar') || lowerName.includes('billiard')) return '🎱';
-            if (lowerName.includes('boling') || lowerName.includes('bowling')) return '🎳';
-            if (lowerName.includes('tembak') || lowerName.includes('pistol')) return '🔫';
-            if (lowerName.includes('yoyo')) return '🪀';
-            if (lowerName.includes('bumerang') || lowerName.includes('boomerang')) return '🪃';
-
-            return null;
+            } catch (e) { 
+                console.error("Sync gagal", e); 
+                appSekolahData = [];
+                gameData = [];
+                renderUI(); 
+            }
         }
 
         function getIconForApp(name) {
-            if (!name) return null;
-
-            // Jika judul dari spreadsheet sudah ditulis beserta emoji di depannya
+            if (!name) return '🏫';
             const emojiMatch = name.match(/(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
             if (emojiMatch) return emojiMatch[0];
 
             const lowerName = name.toLowerCase();
-            
-            // Kaldik & Jadwal khusus
             if (lowerName.includes('kaldik')) return '📆';
             if (lowerName.includes('jadwal')) return '🗓️';
+            if (lowerName.includes('rapor') || lowerName.includes('nilai')) return '📊';
+            if (lowerName.includes('absen') || lowerName.includes('presensi')) return '📋';
+            if (lowerName.includes('buku') || lowerName.includes('perpus')) return '📚';
+            if (lowerName.includes('tugas') || lowerName.includes('ujian') || lowerName.includes('cbt')) return '📝';
+            if (lowerName.includes('guru') || lowerName.includes('ptk')) return '👨‍🏫';
+            if (lowerName.includes('siswa') || lowerName.includes('murid')) return '🎒';
+            if (lowerName.includes('keuangan') || lowerName.includes('kas')) return '💰';
+            if (lowerName.includes('dapodik') || lowerName.includes('sistem')) return '💻';
+            if (lowerName.includes('pmm')) return '🏛️';
 
-            // Rapor & Nilai & Leger
-            if (lowerName.includes('rapor') || lowerName.includes('nilai') || lowerName.includes('leger') || lowerName.includes('kkm')) return '📊';
-            // Presensi & Kehadiran
-            if (lowerName.includes('absen') || lowerName.includes('presensi') || lowerName.includes('hadir')) return '📋';
-            // Perpustakaan & Baca
-            if (lowerName.includes('buku') || lowerName.includes('perpus') || lowerName.includes('literasi') || lowerName.includes('baca')) return '📚';
-            // Kalender & Agenda
-            if (lowerName.includes('kalender') || lowerName.includes('agenda')) return '📅';
-            // CBT, Ujian, Soal, Asesmen, Quiz
-            if (lowerName.includes('tugas') || lowerName.includes('ujian') || lowerName.includes('cbt') || lowerName.includes('soal') || lowerName.includes('tes') || lowerName.includes('quiz') || lowerName.includes('kuis') || lowerName.includes('asesmen')) return '📝';
-            // Guru & Tenaga Pendidik / SKP
-            if (lowerName.includes('guru') || lowerName.includes('pengajar') || lowerName.includes('ptk') || lowerName.includes('skp') || lowerName.includes('kinerja')) return '👨‍🏫';
-            // Siswa, Murid, PPDB
-            if (lowerName.includes('siswa') || lowerName.includes('murid') || lowerName.includes('ppdb') || lowerName.includes('spmb') || lowerName.includes('pendaftaran')) return '🎒';
-            // Keuangan, SPP, Kas, BOS
-            if (lowerName.includes('keuangan') || lowerName.includes('kas') || lowerName.includes('bayar') || lowerName.includes('spp') || lowerName.includes('bos') || lowerName.includes('tabungan')) return '💰';
-            // Surat, Arsip, TU, Administrasi
-            if (lowerName.includes('surat') || lowerName.includes('arsip') || lowerName.includes('dokumen') || lowerName.includes('tu') || lowerName.includes('admin')) return '📑';
-            // Dapodik, Simpatika, Verval, Sistem Data
-            if (lowerName.includes('dapodik') || lowerName.includes('simpatika') || lowerName.includes('verval') || lowerName.includes('data') || lowerName.includes('sistem') || lowerName.includes('aplikasi')) return '💻';
-            // PMM, Kurikulum Merdeka
-            if (lowerName.includes('pmm') || lowerName.includes('merdeka') || lowerName.includes('kurikulum')) return '🏛️';
-            // Web, Portal, Media Sosial
-            if (lowerName.includes('web') || lowerName.includes('situs') || lowerName.includes('portal') || lowerName.includes('link') || lowerName.includes('yt') || lowerName.includes('youtube') || lowerName.includes('ig') || lowerName.includes('instagram')) return '🌐';
-            // Sertifikat & Piagam
-            if (lowerName.includes('sertifikat') || lowerName.includes('piagam') || lowerName.includes('ijazah')) return '📜';
-            // BK & Bimbingan Konseling
-            if (lowerName.includes('bk') || lowerName.includes('konseling') || lowerName.includes('aduan')) return '🗣️';
-            // Kantin
-            if (lowerName.includes('kantin') || lowerName.includes('makan') || lowerName.includes('gizi')) return '🍱';
-            // Ekstrakurikuler & Pramuka
-            if (lowerName.includes('pramuka') || lowerName.includes('ekskul') || lowerName.includes('ekstra')) return '🏕️';
-            // Peta & Lokasi
-            if (lowerName.includes('peta') || lowerName.includes('lokasi') || lowerName.includes('denah')) return '🗺️';
-            // AI & Bot
-            if (lowerName.includes('ai') || lowerName.includes('agbi') || lowerName.includes('bot') || lowerName.includes('chatgpt')) return '🤖';
-            // Galeri, Foto, Video
-            if (lowerName.includes('foto') || lowerName.includes('galeri') || lowerName.includes('video') || lowerName.includes('gambar')) return '🖼️';
-
-            return null;
+            return '🏫';
         }
 
-        const fallbackIconsPool = ['🎮', '🎯', '🎲', '🎪', '🚀', '🛸', '🏎️', '🏆', '🎭', '🎨'];
-        let poolIndex = 0;
+        function getIconForGame(name) {
+            if (!name) return '🎮';
+            const emojiMatch = name.match(/(\p{Extended_Pictographic}|\p{Emoji_Presentation})/u);
+            if (emojiMatch) return emojiMatch[0];
 
-        const fallbackAppIconsPool = ['🏫', '💻', '📱', '📌', '✨', '⭐', '📁', '🗂️', '🎯', '🚀'];
-        let appPoolIndex = 0;
+            const lowerName = name.toLowerCase();
+            const gameIcons = ['⚽', '🏀', '🎾', '🏸', '🏐', '🏓', '🥊', '🛹', '🎳', '🎯', '🎮', '🎲', '🏃‍♂️', '🤸‍♀️', '🚴‍♂️', '🏊‍♂️'];
+            
+            // Pilih ikon secara acak namun konsisten berdasarkan panjang string nama game agar tidak berubah-ubah terus saat render
+            let hash = 0;
+            for (let i = 0; i < lowerName.length; i++) {
+                hash = lowerName.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return gameIcons[Math.abs(hash) % gameIcons.length];
+        }
 
         function renderUI() {
             document.getElementById('materiContainer').innerHTML = KELOMPOK_DATA.map(cls => `
@@ -456,51 +457,49 @@
                 </div>
             `).join('');
 
-            document.getElementById('gameContainer').innerHTML = gameData.map((game, idx) => {
-                const isActive = game.link && game.link.length > 5;
-                
-                let icon = getIconForGame(game.name);
-                if (!icon) {
-                    icon = fallbackIconsPool[poolIndex % fallbackIconsPool.length];
-                    poolIndex++;
-                }
-                
-                const colors = ['bg-indigo-500', 'bg-pink-500', 'bg-teal-500', 'bg-amber-500', 'bg-rose-500', 'bg-emerald-500', 'bg-cyan-500'];
-                const bgCol = isActive ? colors[idx % colors.length] : 'bg-gray-400';
-                
-                return `
-                    <button onclick="handleGameClick('${game.link}')" class="p-4 rounded-3xl ${bgCol} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
-                        <span class="text-2xl">${icon}</span>
-                        <span class="font-bold text-[13px] uppercase">${game.name}</span>
-                        <span class="text-[11px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/10'} px-2 py-0.5 rounded-full">
-                            ${isActive ? '✅ Aktif' : '❌ Belum Tersedia'}
-                        </span>
-                    </button>
-                `;
-            }).join('');
+            const appContainer = document.getElementById('appSekolahContainer');
+            if (appSekolahData.length > 0) {
+                const appColors = ['bg-amber-500', 'bg-emerald-500', 'bg-sky-500', 'bg-indigo-500', 'bg-fuchsia-500', 'bg-rose-500', 'bg-teal-500'];
+                appContainer.innerHTML = appSekolahData.map((app, idx) => {
+                    const isActive = app.link && app.link.length > 5;
+                    const icon = getIconForApp(app.name);
+                    const bgCol = isActive ? appColors[idx % appColors.length] : 'bg-gray-400';
+                    
+                    return `
+                        <button onclick="handleAppClick('${app.link}')" class="p-4 rounded-3xl ${bgCol} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                            <span class="text-2xl">${icon}</span>
+                            <span class="font-bold text-[13px] uppercase">${app.name}</span>
+                            <span class="text-[11px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/10'} px-2 py-0.5 rounded-full">
+                                ${isActive ? '✅ Aktif' : '❌ Belum Tersedia'}
+                            </span>
+                        </button>
+                    `;
+                }).join('');
+            } else {
+                appContainer.innerHTML = `<div class="col-span-2 text-center py-4 text-sm text-gray-500 dark:text-gray-400">Belum ada data aplikasi sekolah.</div>`;
+            }
 
-            document.getElementById('appSekolahContainer').innerHTML = appSekolahData.map((app, idx) => {
-                const isActive = app.link && app.link.length > 5;
-                
-                let icon = getIconForApp(app.name);
-                if (!icon) {
-                    icon = fallbackAppIconsPool[appPoolIndex % fallbackAppIconsPool.length];
-                    appPoolIndex++;
-                }
-                
-                const colors = ['bg-amber-500', 'bg-emerald-500', 'bg-sky-500', 'bg-indigo-500', 'bg-fuchsia-500', 'bg-rose-500', 'bg-teal-500'];
-                const bgCol = isActive ? colors[idx % colors.length] : 'bg-gray-400';
-                
-                return `
-                    <button onclick="handleAppClick('${app.link}')" class="p-4 rounded-3xl ${bgCol} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
-                        <span class="text-2xl">${icon}</span>
-                        <span class="font-bold text-[13px] uppercase">${app.name}</span>
-                        <span class="text-[11px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/10'} px-2 py-0.5 rounded-full">
-                            ${isActive ? '✅ Aktif' : '❌ Belum Tersedia'}
-                        </span>
-                    </button>
-                `;
-            }).join('');
+            const gameContainer = document.getElementById('zonaHiburanContainer');
+            if (gameData.length > 0) {
+                const gameColors = ['bg-rose-500', 'bg-amber-500', 'bg-emerald-500', 'bg-sky-500', 'bg-indigo-500', 'bg-fuchsia-500', 'bg-teal-500'];
+                gameContainer.innerHTML = gameData.map((game, idx) => {
+                    const isActive = game.link && game.link.length > 5;
+                    const icon = getIconForGame(game.name);
+                    const bgCol = isActive ? gameColors[idx % gameColors.length] : 'bg-gray-400';
+                    
+                    return `
+                        <button onclick="handleAppClick('${game.link}')" class="p-4 rounded-3xl ${bgCol} text-black border border-white/20 flex flex-col items-center gap-1.5 hover:scale-[1.02] active:scale-95 transition-all shadow-md">
+                            <span class="text-2xl">${icon}</span>
+                            <span class="font-bold text-[13px] uppercase">${game.name}</span>
+                            <span class="text-[11px] font-bold ${isActive ? 'bg-white/25' : 'bg-black/10'} px-2 py-0.5 rounded-full">
+                                ${isActive ? '✅ Aktif' : '❌ Belum Tersedia'}
+                            </span>
+                        </button>
+                    `;
+                }).join('');
+            } else {
+                gameContainer.innerHTML = `<div class="col-span-2 text-center py-4 text-sm text-gray-500 dark:text-gray-400">Belum ada data zona hiburan.</div>`;
+            }
         }
 
         const KELOMPOK_DATA = [
@@ -513,7 +512,6 @@
         ];
 
         function handleClassClick(id) { if (DYNAMIC_CLASS_LINKS[id]) window.open(DYNAMIC_CLASS_LINKS[id], '_blank'); else showToast("Kelas ini Belum dibuka.", "error"); }
-        function handleGameClick(link) { if (link && link.length > 5) window.open(link, '_blank'); else showToast("Game belum tersedia.", "error"); }
         function handleAppClick(link) { if (link && link.length > 5) window.open(link, '_blank'); else showToast("Aplikasi belum tersedia.", "error"); }
         
         function showToast(message, type) {
