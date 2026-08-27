@@ -262,7 +262,8 @@
     </div>
 
     <script>
-        const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮', '🦋', '🕷️', '🦈', '🐥', '🦓', '🦝', '🐻‍❄️', '🐺', '🐵', '🧕', '🧑🏻‍💼'];
+        const GUESTBOOK_URL = "https://script.google.com/macros/s/AKfycbzn8nNRtSCdscqOkb89SbutBnqJZSvhjb5SRMA1_crWVP7mvKS806hpqZB21p8RVm58/exec";
+        const avatars = ['🐸', '🐶', '🐱', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🦁', '🐯', '🐮', '🦋', '🕷️', '🦈', '🐥', 'ZEBRA', '🦝', '🐻‍❄️', '🐺', '🐵', '🧕', '🧑🏻‍💼'];
         let currentAvatarIndex = 0;
         let isInfoOpen = false;
 
@@ -294,10 +295,28 @@
                 showToast("Nama tidak boleh kosong!", "error");
                 return;
             }
+            
             localStorage.setItem('pjok_guest_name', inputName);
             document.getElementById('murid-name').value = inputName;
             document.getElementById('guestbook-modal').classList.add('hidden');
             showToast(`Halo, ${inputName}! Selamat belajar PJOK. 🎉`, "success");
+
+            // Mengirim nama tamu ke Google Sheets via Apps Script
+            try {
+                const formData = new URLSearchParams();
+                formData.append('nama', inputName);
+
+                fetch(GUESTBOOK_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: formData.toString()
+                }).catch(err => console.error("Gagal menyimpan ke Google Sheets:", err));
+            } catch (e) {
+                console.error("Error:", e);
+            }
         }
 
         function updateGuestName(val) {
@@ -412,7 +431,6 @@
             if (!text) return [];
             const lines = text.split('\n').filter(l => l.trim() !== "");
             const result = [];
-            // Mulai dari baris ke-1 untuk melewati header
             for (let i = 1; i < lines.length; i++) {
                 const row = lines[i];
                 let cols = [];
@@ -452,7 +470,6 @@
                         const infoList = lines.slice(1);
                         infoContainer.innerHTML = infoList.map(line => `<p class="mb-1.5 text-charcoal font-vt text-base">${line.replace(/"/g, '')}</p>`).join('');
                         
-                        // Menampilkan jumlah info terbaru pada badge angka di icon
                         if (infoList.length > 0) {
                             infoBadge.textContent = infoList.length;
                             infoSection.classList.remove('hidden');
@@ -476,7 +493,6 @@
                 const textApp = await fetchCSVWithFallback(APP_SEKOLAH_SHEET_URL);
                 appSekolahData = parseCSV(textApp);
 
-                // Mengambil data dari sheet Hiburan
                 let textGame = await fetchCSVWithFallback(GAME_SHEET_URL);
                 if (!textGame) {
                     textGame = await fetchCSVWithFallback(`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=hiburan`);
@@ -521,7 +537,6 @@
             const lowerName = name.toLowerCase();
             const gameIcons = ['⚽', '🏀', '🎾', '🏸', '🏐', '🏓', '🥊', '🛹', '🎳', '🎯', '🎮', '🎲', '🏃‍♂️', '🤸‍♀️', '🚴‍♂️', '🏊‍♂️'];
             
-            // Pilih ikon secara acak namun konsisten berdasarkan panjang string nama game agar tidak berubah-ubah terus saat render
             let hash = 0;
             for (let i = 0; i < lowerName.length; i++) {
                 hash = lowerName.charCodeAt(i) + ((hash << 5) - hash);
